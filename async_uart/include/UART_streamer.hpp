@@ -76,6 +76,18 @@ public:
         xSemaphoreTake(uart_tx_done_sem, portMAX_DELAY); // Wait for completion.
     }
 
+    void writeByte(uint8_t byte) {
+        while (!uart_is_writable(uart_port)) {
+            taskYIELD();
+            // Wait till writing is possible.
+        }
+        uart_putc_raw(uart_port, byte);
+
+        uart_set_irq_enables(uart_port, true, true);
+        taskYIELD();
+        xSemaphoreTake(uart_tx_done_sem, portMAX_DELAY); // Wait for completion.
+    }
+
     bool uart_check_rx_non_blocking(uart_buffer_t* outBuffer, uint16_t size, TickType_t waitTime) {
         if (outBuffer == nullptr || size == 0) {
             // Important to not proceed when outbuf is nullptr to prevent undefined behavior.
