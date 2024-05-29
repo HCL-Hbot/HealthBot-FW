@@ -63,6 +63,7 @@ if (PICO_CYW43_SUPPORTED) # set by BOARD=pico-w
         target_include_directories(motor_display PUBLIC
                 ${CMAKE_CURRENT_LIST_DIR}/src
                 ${CMAKE_CURRENT_LIST_DIR}/motor_driver
+                ${CMAKE_CURRENT_LIST_DIR}/display
         )
 
         # Select the heap port.  values between 1-4 will pick a heap.
@@ -103,8 +104,12 @@ if (PICO_CYW43_SUPPORTED) # set by BOARD=pico-w
         target_link_libraries(cli_bindings PUBLIC embedded_cli_lib ui STEPMOTOR_DRIVER)
         target_link_libraries(motor_display cli_bindings)
 
-        target_link_libraries(motor_display  pico_cyw43_arch_lwip_poll
+        target_link_libraries(motor_display 
+        
         DISPLAY
+        ASYNC_UART
+
+        pico_cyw43_arch_lwip_poll
         pico_stdlib
         pico_lwip_mbedtls
         pico_mbedtls
@@ -122,4 +127,5 @@ if (PICO_CYW43_SUPPORTED) # set by BOARD=pico-w
 endif()
 
 add_subdirectory(display)
-add_subdirectory (motor_driver)
+add_subdirectory(motor_driver)
+add_subdirectory(async_uart)
