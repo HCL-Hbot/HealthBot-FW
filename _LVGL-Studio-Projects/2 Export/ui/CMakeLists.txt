@@ -1,0 +1,14 @@
+SET(SOURCES components/ui_comp_image1.c
+    components/ui_comp.c
+    screens/ui_Screen1.c
+    ui.c
+    components/ui_comp_hook.c
+    ui_helpers.c
+    ui_events.c
+    images/ui_img_achtergrond_oog_2_png.c
+    images/ui_img_iris_png.c
+    images/ui_img_puntjes_png.c
+    images/ui_img_pupil_png.c
+    images/ui_img_glansjes_png.c)
+
+add_library(ui ${SOURCES})
