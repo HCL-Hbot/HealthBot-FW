@@ -20,6 +20,18 @@
 
 #include <eye_driver.hpp>
 
+#include "cli_port.hpp"
+
+void uart_task(void *Pvarg) {
+    vTaskDelay(1000/portTICK_PERIOD_MS);
+    init_cli_interface();
+    while (true)
+    {
+        periodic_cli_handler();
+        vTaskDelay(1 / portTICK_PERIOD_MS);
+    }
+}
+
 int main() {
     stdio_init_all();
     lv_init();
@@ -32,6 +44,7 @@ int main() {
 
     xTaskCreate(driver.displayHandler, "display_task", 800, &driver, 1, NULL);
     xTaskCreate(driver.runEyeControlHandle, "uart_task", 1700, &driver, 2, NULL);
+    xTaskCreate(uart_task, "uart_task", 360, nullptr, 1, nullptr);
 
     vTaskStartScheduler();
 

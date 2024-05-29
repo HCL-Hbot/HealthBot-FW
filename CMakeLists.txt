@@ -26,6 +26,13 @@ FetchContent_Declare(
     SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/lv_drivers
 )
 
+FetchContent_Declare(
+    embedded_cli
+    GIT_REPOSITORY https://github.com/funbiscuit/embedded-cli.git
+    GIT_TAG master
+    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/embedded-cli
+)
+
 project(Motor_display C CXX ASM)
 
 set(CMAKE_C_STANDARD 11)
@@ -44,7 +51,6 @@ add_compile_options(-Wall
         -Wno-maybe-uninitialized
 )
 
-
 if (PICO_CYW43_SUPPORTED) # set by BOARD=pico-w
     if (NOT TARGET pico_cyw43_arch)
         message("Skipping build as support is not available")
@@ -56,6 +62,7 @@ if (PICO_CYW43_SUPPORTED) # set by BOARD=pico-w
 
         target_include_directories(motor_display PUBLIC
                 ${CMAKE_CURRENT_LIST_DIR}/src
+                ${CMAKE_CURRENT_LIST_DIR}/motor_driver
         )
 
         # Select the heap port.  values between 1-4 will pick a heap.
@@ -90,6 +97,11 @@ if (PICO_CYW43_SUPPORTED) # set by BOARD=pico-w
 
         target_link_libraries(ui lvgl)
 
+        FetchContent_MakeAvailable(embedded_cli)
+        add_library(cli_bindings STATIC src/cli_hooks/cli_methods.cpp src/cli_hooks/cli_port.cpp)
+        target_include_directories(cli_bindings PUBLIC src/cli_hooks)
+        target_link_libraries(cli_bindings PUBLIC embedded_cli_lib ui STEPMOTOR_DRIVER)
+        target_link_libraries(motor_display cli_bindings)
 
         target_link_libraries(motor_display  pico_cyw43_arch_lwip_poll
         DISPLAY
@@ -106,8 +118,8 @@ if (PICO_CYW43_SUPPORTED) # set by BOARD=pico-w
         hardware_spi
         ui)
         pico_add_extra_outputs(motor_display)
-
     endif ()
 endif()
 
 add_subdirectory(display)
+add_subdirectory (motor_driver)
