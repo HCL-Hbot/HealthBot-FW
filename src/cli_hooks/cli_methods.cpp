@@ -2,7 +2,6 @@
 #include "embedded_cli.h"
 #include <stdio.h>
 #include <stdlib.h>     /* atoi */
-#include <ui.h>
 
 #define ENUM_CLASS_VAL(x) (static_cast<uint8_t>(x))
 
@@ -19,35 +18,6 @@ void display_anim(EmbeddedCli *cli, char *args, void *context) {
 
 void display_move(EmbeddedCli *cli, char *args, void *context) {
   
-// uint8_t count = embeddedCliGetTokenCount(args);
-// if(count > 1) {
-//     const int obj_id  = atoi(embeddedCliGetToken(args, 1));
-//     const int x = atoi(embeddedCliGetToken(args, 2));
-//     const int y = atoi(embeddedCliGetToken(args, 3));
-//     const int dur = atoi(embeddedCliGetToken(args, 4));
-//     if(obj_id > ENUM_CLASS_VAL(screen_objects::screen_obj_alt_1)) {
-//         embeddedCliPrint(cli, "!E object id parameter should be a number between 0 and 9!");
-//         return;
-//     }
-    
-//     if(x > 240 || x < 0) {
-//         embeddedCliPrint(cli, "!E yaw should be a number between 0 and 240 pixels!");
-//         return;
-//     }
-    
-//     if(y > 240 || y < 0) {
-//         embeddedCliPrint(cli, "!E pitch should be a number between 0 and 240 pixels!");
-//         return;
-//     }
-    
-//     if(dur > 1000 || dur < 0) {
-//         embeddedCliPrint(cli, "!E duration should be a number between 0 and 1000 ms!");
-//     }
-
-
-// } else {
-//     embeddedCliPrint(cli, "!E Invalid number of parameters entered! Should be D104 X Y T");
-// }
 }
 
 void motor_cfg(EmbeddedCli *cli, char *args, void *context) {

@@ -1,3 +1,5 @@
 FreeRTOS/
 lvgl/
 lv_drivers/
+embedded-cli/
+PicoLED/

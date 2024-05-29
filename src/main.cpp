@@ -20,8 +20,8 @@
 
 #include <eye_driver.hpp>
 #include <UART_streamer.hpp>
-
 #include "cli_port.hpp"
+#include <ledstrip_driver.hpp>
 
 static inline SERIAL::UART_RTOS_Driver uartStreamer{UART_BAUD_RATE, UART_TX_PIN, UART_RX_PIN};
 

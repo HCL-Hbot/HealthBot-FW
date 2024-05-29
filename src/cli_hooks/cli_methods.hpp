@@ -1,6 +1,5 @@
 #ifndef CLI_METHODS_HPP
 #define CLI_METHODS_HPP
-#include <lvgl.h>
 #include <embedded_cli.h>
 
 void display_ena(EmbeddedCli *cli, char *args, void *context);
