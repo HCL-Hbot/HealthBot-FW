@@ -41,7 +41,7 @@ int main() {
     COM::BrainBoardDriver commDriver(UART_BAUD_RATE, UART_TX_PIN, UART_RX_PIN, cli); 
 
     // Start CLI processing task
-    commDriver.startCliTask();
+    commDriver.startTasks();
 
     vTaskStartScheduler();
 
