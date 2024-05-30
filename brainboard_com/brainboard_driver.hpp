@@ -65,10 +65,6 @@ private:
         instance_->writeByte(static_cast<uint8_t>(c));
     }
 
-    static inline void writeString(EmbeddedCli* embeddedCli, const char* str) {
-        
-    }
-
     static void cliTask(void* pvParameters) {
         BrainBoardDriver* driver = static_cast<BrainBoardDriver*>(pvParameters);
         SERIAL::uart_buffer_t rxBuffer;
@@ -85,16 +81,6 @@ private:
             vTaskDelay(pdMS_TO_TICKS(CLI_PROCESSING_PERIOD));
         }
     }
-
-    // static void uartSendTask(void* pvParameters) {
-    //     BrainBoardDriver* driver = static_cast<BrainBoardDriver*>(pvParameters);
-    //     const char* message = "Hello, UART World!\n";
-
-    //     while (true) {
-    //         driver->uart_driver_.uart_send_non_blocking(message);
-    //         vTaskDelay(pdMS_TO_TICKS(UART_SEND_TASK_PERIOD));
-    //     }
-    // }
 
     bool addCliCommandBinding(const char* name, const char* help, bool tokenizeArgs, void* context, void (*binding)(EmbeddedCli* cli, char* args, void* context)) {
         CliCommandBinding commandBinding = { name, help, tokenizeArgs, context, binding };

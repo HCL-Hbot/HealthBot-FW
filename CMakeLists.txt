@@ -3,6 +3,9 @@ set(PICO_BOARD pico_w)
 set(PICO_SDK_FETCH_FROM_GIT ON)
 set(PROJECT_NAME HBOT-FW-SB)
 
+set(PICO_CXX_ENABLE_EXCEPTIONS 1)
+set(PICO_CXX_ENABLE_RTTI 1)
+
 # Pull in SDK (must be before project)
 include(pico_sdk_import.cmake)
 
@@ -39,7 +42,7 @@ FetchContent_Declare(
 # PicoLED
 FetchContent_Declare(
   PicoLED
-  GIT_REPOSITORY https://github.com/ForsakenNGS/PicoLED.git
+  GIT_REPOSITORY https://github.com/HCL-Hbot/EXLIB-PicoLED.git
   GIT_TAG master
   SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/PicoLED
 )
