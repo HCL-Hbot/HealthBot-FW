@@ -42,7 +42,7 @@ FetchContent_Declare(
 # PicoLED
 FetchContent_Declare(
   PicoLED
-  GIT_REPOSITORY https://github.com/HCL-Hbot/EXLIB-PicoLED
+  GIT_REPOSITORY https://github.com/HCL-Hbot/EXLIB-PicoLED.git
   GIT_TAG master
   SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/PicoLED
 )

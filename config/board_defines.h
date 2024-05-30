@@ -24,4 +24,9 @@
 #define UART_RX_PIN         17
 #define UART_BAUD_RATE      115200
 
+/* STEP MOTOR PINS #1 - X-AXIS? */
+#define STEP_MOTOR_PIN      8
+#define DIR_MOTOR_PIN       9
+#define EN_MOTOR_PIN        10
+
 #endif
