@@ -17,13 +17,23 @@ namespace COM {
 
     static void configureMotor(EmbeddedCli* cli, char* args, void* context) {
         uint16_t argCount = embeddedCliGetTokenCount(args);
-        if (argCount == 2) {
-            const char* motorIdStr = embeddedCliGetToken(args, 1);
-            const char* speedStr = embeddedCliGetToken(args, 2);
+        int motorId = -1;
+        int speed = -1;
+
+        for (uint16_t i = 1; i <= argCount; ++i) {
+            const char* token = embeddedCliGetToken(args, i);
+            if (token[0] == 'D') {
+                motorId = atoi(&token[1]);
+            } else if (token[0] == 'S') {
+                speed = atoi(&token[1]);
+            }
+        }
+
+        if (motorId != -1 && speed != -1) {
             MotorCommand command;
             command.type = MotorCommand::CONFIGURE;
-            command.motorId = atoi(motorIdStr);
-            command.speed = atoi(speedStr);
+            command.motorId = motorId;
+            command.speed = speed;
 
             if (xQueueSend(motorCommandQueue, &command, pdMS_TO_TICKS(10)) != pdPASS) {
                 printf("Failed to send configure command\r\n");
@@ -48,25 +58,6 @@ namespace COM {
             }
         } else {
             printf("Invalid arguments for M102 command\r\n");
-        }
-    }
-
-    static void controlLEDStrip(EmbeddedCli* cli, char* args, void* context) {
-        uint16_t argCount = embeddedCliGetTokenCount(args);
-        if (argCount == 3) {
-            const char* ledStripIdStr = embeddedCliGetToken(args, 1);
-            const char* modeStr = embeddedCliGetToken(args, 2);
-            const char* colorStr = embeddedCliGetToken(args, 3);
-            LEDStripCommand command;
-            command.ledStripId = atoi(ledStripIdStr);
-            command.mode = atoi(modeStr);
-            command.color = atoi(colorStr);
-
-            if (xQueueSend(ledStripCommandQueue, &command, pdMS_TO_TICKS(10)) != pdPASS) {
-                printf("Failed to send LED strip control command\r\n");
-            }
-        } else {
-            printf("Invalid arguments for L201 command\r\n");
         }
     }
 } // namespace COM

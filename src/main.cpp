@@ -42,7 +42,6 @@ int main() {
 
     // Start CLI processing task
     commDriver.startTasks();
-
     vTaskStartScheduler();
 
     while (true) {;}

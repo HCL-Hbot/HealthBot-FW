@@ -32,7 +32,7 @@ public:
         // Queeue Creation: 
         motorCommandQueue = xQueueCreate(10, sizeof(MotorCommand));
 
-        if (motorCommandQueue == nullptr || ledStripCommandQueue == nullptr) {
+        if (motorCommandQueue == nullptr) {
             printf("Failed to create command queues\n");
         }
     }
@@ -61,7 +61,7 @@ private:
     static inline BrainBoardDriver* instance_ = nullptr;
 
     void setupCliBindings() {
-        addCliCommandBinding(cli_, "M101", "Configure Motor <MotorID> <Speed>", true, nullptr, configureMotor);
+        addCliCommandBinding(cli_, "M101", "Configure Motor D<MotorID> S<Speed>", true, nullptr, configureMotor);
         addCliCommandBinding(cli_, "M102", "Control Motor <MotorID> <start|stop>", true, nullptr, controlMotor);
     }
 
