@@ -19,32 +19,19 @@ public:
     }
 
     void initialize() {
-            gpio_set_function(17, GPIO_FUNC_UART);
-            gpio_set_function(16, GPIO_FUNC_UART);
-            uart_init(uart0, 115200);
-        // uart_driver_.initialize();
+        uart_driver_.initialize();
     }
 
     ~BrainBoardDriver() {
         uart_driver_.deinitialize();
     }
 
-    // void send(const char* data) {
-    //     uart_driver_.uart_send_non_blocking(data);
-    // }
-
-    // bool receive(char* buffer, uint16_t bufferSize, TickType_t waitTime) {
-    //     SERIAL::uart_buffer_t uartBuffer;
-    //     if (uart_driver_.uart_check_rx_non_blocking(&uartBuffer, bufferSize, waitTime)) {
-    //         strncpy(buffer, uartBuffer.data, uartBuffer.length);
-    //         buffer[uartBuffer.length] = '\0'; // Null-terminate the received string
-    //         return true;
-    //     }
-    //     return false;
-    // }
-
     void startCliTask() {
         xTaskCreate(&BrainBoardDriver::cliTask, "CLITask", 600, this, 1, nullptr);
+    }
+
+    void writeByte(uint8_t byte) {
+        uart_driver_.writeByte(byte);
     }
 
 private:
@@ -74,17 +61,40 @@ private:
         addCliCommandBinding("S111", "Status Check", true, nullptr, statusCheck);
     }
 
-    static inline void writeChar(EmbeddedCli *embeddedCli, char c) {
-        uart_putc(uart0, c);
+    static inline void writeChar(EmbeddedCli* embeddedCli, char c) {
+        instance_->writeByte(static_cast<uint8_t>(c));
+    }
+
+    static inline void writeString(EmbeddedCli* embeddedCli, const char* str) {
+        
     }
 
     static void cliTask(void* pvParameters) {
         BrainBoardDriver* driver = static_cast<BrainBoardDriver*>(pvParameters);
+        SERIAL::uart_buffer_t rxBuffer;
+
         while (true) {
-            driver->processCli();
+            if (driver->uart_driver_.uart_check_rx_non_blocking(&rxBuffer, sizeof(rxBuffer), pdMS_TO_TICKS(UART_RECEIVE_TASK_PERIOD))) {
+                for (uint16_t i = 0; i < rxBuffer.length; i++) {
+                    embeddedCliReceiveChar(driver->cli_, rxBuffer.data[i]);
+                }
+                embeddedCliProcess(driver->cli_);
+            } else {
+                taskYIELD();
+            }
             vTaskDelay(pdMS_TO_TICKS(CLI_PROCESSING_PERIOD));
         }
     }
+
+    // static void uartSendTask(void* pvParameters) {
+    //     BrainBoardDriver* driver = static_cast<BrainBoardDriver*>(pvParameters);
+    //     const char* message = "Hello, UART World!\n";
+
+    //     while (true) {
+    //         driver->uart_driver_.uart_send_non_blocking(message);
+    //         vTaskDelay(pdMS_TO_TICKS(UART_SEND_TASK_PERIOD));
+    //     }
+    // }
 
     bool addCliCommandBinding(const char* name, const char* help, bool tokenizeArgs, void* context, void (*binding)(EmbeddedCli* cli, char* args, void* context)) {
         CliCommandBinding commandBinding = { name, help, tokenizeArgs, context, binding };

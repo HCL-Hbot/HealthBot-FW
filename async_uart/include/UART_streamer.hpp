@@ -62,6 +62,7 @@ public:
     }
 
     void uart_send_non_blocking(const char *data) {
+        xSemaphoreTake(uart_tx_done_sem, portMAX_DELAY); // Wait for completion.
         for (const char *ptr = data; *ptr != '\0'; ++ptr) {
             while (!uart_is_writable(uart_port)) {
                 // Yield is preferred so that other tasks with higher prio can proceed
@@ -73,19 +74,16 @@ public:
         
         uart_set_irq_enables(uart_port, true, true);
         taskYIELD();
-        xSemaphoreTake(uart_tx_done_sem, portMAX_DELAY); // Wait for completion.
     }
 
     void writeByte(uint8_t byte) {
-        while (!uart_is_writable(uart_port)) {
+        while (! uart_is_writable(uart_port)) {
             taskYIELD();
             // Wait till writing is possible.
         }
         uart_putc_raw(uart_port, byte);
-
         uart_set_irq_enables(uart_port, true, true);
         taskYIELD();
-        xSemaphoreTake(uart_tx_done_sem, portMAX_DELAY); // Wait for completion.
     }
 
     bool uart_check_rx_non_blocking(uart_buffer_t* outBuffer, uint16_t size, TickType_t waitTime) {
