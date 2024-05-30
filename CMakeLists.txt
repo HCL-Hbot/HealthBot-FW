@@ -3,6 +3,9 @@ set(PICO_BOARD pico_w)
 set(PICO_SDK_FETCH_FROM_GIT ON)
 set(PROJECT_NAME HBOT-FW-SB)
 
+set(PICO_CXX_ENABLE_EXCEPTIONS 1)
+
+
 # Pull in SDK (must be before project)
 include(pico_sdk_import.cmake)
 

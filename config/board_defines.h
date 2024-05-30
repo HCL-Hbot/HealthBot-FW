@@ -9,7 +9,7 @@
 
 /* DISPLAY HW */
 #define DISPLAY_MISO        4
-#define DISPLAY_SCK         6
+#define DISPLAY_SCK         2
 #define DISPLAY_MOSI        3
 #define DISPLAY_CMD         5
 // Display Left: 
@@ -23,5 +23,18 @@
 #define UART_TX_PIN         16
 #define UART_RX_PIN         17
 #define UART_BAUD_RATE      115200
+
+/* MOTOR PINS */
+#define MOTOR1_ENABLE       18
+#define MOTOR1_STEP         19
+#define MOTOR1_DIR          20
+#define MOTOR2_ENABLE       6
+#define MOTOR2_STEP         21
+#define MOTOR2_DIR          22
+
+/* LEDSTRIP PINS*/
+#define LEDSTRIP1_DATAPIN    14
+#define LEDSTRIP2_DATAPIN    15
+
 
 #endif

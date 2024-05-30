@@ -14,7 +14,8 @@
             "device": "RP2040_M0_0",
             "interface": "swd",
             "runToEntryPoint": "main",
-            "svdFile": "${env:PICO_SDK_PATH}/src/rp2040/hardware_regs/rp2040.svd" 
+            "svdFile": "${env:PICO_SDK_PATH}/src/rp2040/hardware_regs/rp2040.svd",
+            "serverpath": "C:/Program Files/SEGGER/JLink_V796i/JLinkGDBServerCL.exe"
           }
     ]
 }
