@@ -1,6 +1,8 @@
 #ifndef COMMAND_DEFINES_HPP
 #define COMMAND_DEFINES_HPP
 
+#include <PicoLed.hpp>
+
 /* SIZE REFERENCES: */
 #define MOTOR_COMMAND_SIZE sizeof(MotorCommand)
 #define EYE_COMMAND_SIZE sizeof(EyeControlCommand)

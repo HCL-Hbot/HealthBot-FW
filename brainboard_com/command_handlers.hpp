@@ -1,10 +1,11 @@
 #ifndef COMMAND_HANDLERS_HPP
 #define COMMAND_HANDLERS_HPP
 
-#include <embedded_cli.h>
-
 #include <stdio.h>
 #include <string.h>
+#include <embedded_cli.h>
+#include <PicoLed.hpp>
+#include <Effects/Fade.hpp>
 
 namespace COM {
     extern QueueHandle_t motorCommandQueue;
@@ -122,6 +123,69 @@ namespace COM {
 
     }
 /*=== DISPLAYS  ===*/
+/*=== LEDSTRIP  === */
+    static void interpretLEDStripSetColor(EmbeddedCli* cli, char* args, void* context) {
+        uint16_t argCount = embeddedCliGetTokenCount(args);
 
+        if (argCount == 3) {
+            const char* rStr = embeddedCliGetToken(args, 1);
+            const char* gStr = embeddedCliGetToken(args, 2);
+            const char* bStr = embeddedCliGetToken(args, 3);
+            LEDStripCommand command;
+
+            command.type = LEDStripCommand::SET_COLOR;
+            command.color = {static_cast<uint8_t>(atoi(rStr)), static_cast<uint8_t>(atoi(gStr)), static_cast<uint8_t>(atoi(bStr)), 0};
+
+            if (xQueueSend(ledStripCommandQueue, &command, pdMS_TO_TICKS(10)) != pdPASS) {
+                printf("Failed to send LED strip color command\r\n");
+            }
+
+        } else {
+            printf("Invalid arguments for L101 command\r\n");
+        }
+    }
+
+    static void interpretLEDStripSetBrightness(EmbeddedCli* cli, char* args, void* context) {
+        uint16_t argCount = embeddedCliGetTokenCount(args);
+
+        if (argCount == 1) {
+            const char* brightnessStr = embeddedCliGetToken(args, 1);
+            LEDStripCommand command;
+
+            command.type = LEDStripCommand::SET_BRIGHTNESS;
+            command.brightness = static_cast<uint8_t>(atoi(brightnessStr));
+
+            if (xQueueSend(ledStripCommandQueue, &command, pdMS_TO_TICKS(10)) != pdPASS) {
+                printf("Failed to send LED strip brightness command\r\n");
+            }
+
+        } else {
+            printf("Invalid arguments for L102 command\r\n");
+        }
+    }
+
+    static void interpretLEDStripFade(EmbeddedCli* cli, char* args, void* context) {
+        uint16_t argCount = embeddedCliGetTokenCount(args);
+
+        if (argCount == 4) {
+            const char* rStr = embeddedCliGetToken(args, 1);
+            const char* gStr = embeddedCliGetToken(args, 2);
+            const char* bStr = embeddedCliGetToken(args, 3);
+            const char* delayStr = embeddedCliGetToken(args, 4);
+            LEDStripCommand command;
+
+            command.type = LEDStripCommand::FADE;
+            command.color = {static_cast<uint8_t>(atoi(rStr)), static_cast<uint8_t>(atoi(gStr)), static_cast<uint8_t>(atoi(bStr)), 0};
+            command.fadeDelay = atof(delayStr);
+
+            if (xQueueSend(ledStripCommandQueue, &command, pdMS_TO_TICKS(10)) != pdPASS) {
+                printf("Failed to send LED strip fade command\r\n");
+            }
+
+        } else {
+            printf("Invalid arguments for L103 command\r\n");
+        }
+    }
+/*=== LEDSTRIP  === */
 } // namespace COM
 #endif // COMMAND_HANDLERS_HPP  

@@ -9,4 +9,7 @@ target_link_libraries(BRAINBOARD_COM INTERFACE
     ASYNC_UART
     STEPMOTOR_DRIVER
     DISPLAY
+    
+
+    PicoLed
 )

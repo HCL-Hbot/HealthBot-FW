@@ -21,8 +21,16 @@
 #include <eye_driver.hpp>
 #include <UART_streamer.hpp>
 #include "cli_port.hpp"
+
 #include <ledstrip_driver.hpp>
+#include <Effects/Fade.hpp>
+#include "PicoLedEffect.hpp"
+
 #include <brainboard_driver.hpp>
+
+#define NUM_LEDS1 30
+#define NUM_LEDS2 60
+#define LED_BRIGHTNESS 100
 
 int main() {
     stdio_init_all();
@@ -37,18 +45,20 @@ int main() {
     lv_disp_t *disp2 = lv_disp_get_next(disp1);
 
     DISPLAY::EyeDisplayDriver* driver = new DISPLAY::EyeDisplayDriver(disp1, disp2);
+    LED::LedStripController* ledStrips = new LED::LedStripController(LEDSTRIP1_DATAPIN, NUM_LEDS1, LEDSTRIP2_DATAPIN, NUM_LEDS2);
+
     // DISPLAY::EyeDisplayDriver driver(disp1, disp2);
     xTaskCreate(driver->displayHandler, "display_task", 800, driver, 2, NULL);
 
-    COM::BrainBoardDriver commDriver(UART_BAUD_RATE, UART_TX_PIN, UART_RX_PIN, cli, driver); 
+    COM::BrainBoardDriver commDriver(UART_BAUD_RATE, UART_TX_PIN, UART_RX_PIN, cli, driver, ledStrips); 
 
-    // Start CLI processing task
     commDriver.startTasks();
-
     vTaskStartScheduler();
 
     while (true) {;}
+
     delete driver;
+    delete ledStrips;
 
     return 0;
 }

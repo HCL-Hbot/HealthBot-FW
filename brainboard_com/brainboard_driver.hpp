@@ -23,11 +23,14 @@ namespace COM {
 // Global, but namespace limited Queues:
 QueueHandle_t motorCommandQueue;
 QueueHandle_t eyeControlCommandQueue;
+QueueHandle_t ledStripCommandQueue;
 
 class BrainBoardDriver {
 public:
     BrainBoardDriver(const uint32_t baudRate, const uint8_t txPin, 
-    const uint8_t rxPin, EmbeddedCli* cli, DISPLAY::EyeDisplayDriver* eyeDisplayDriver) :
+    const uint8_t rxPin, EmbeddedCli* cli, 
+    DISPLAY::EyeDisplayDriver* eyeDisplayDriver,
+    LED::LedStripController* ledStripController) :
         uart_driver_(baudRate, txPin, rxPin), cli_(cli), eyeDisplayDriver_(eyeDisplayDriver) {
         instance_ = this;
         initialize();
@@ -37,8 +40,9 @@ public:
         // Queeue Creation: 
         motorCommandQueue = xQueueCreate(10, sizeof(MotorCommand));
         eyeControlCommandQueue = xQueueCreate(10, sizeof(EyeControlCommand));
+        ledStripCommandQueue = xQueueCreate(10, sizeof(LEDStripCommand));
 
-        if (motorCommandQueue == nullptr || eyeControlCommandQueue == nullptr) {
+        if (motorCommandQueue == nullptr || eyeControlCommandQueue == nullptr || ledStripCommandQueue == nullptr) {
             printf("Failed to create command queues\n");
         }
     }
@@ -55,6 +59,7 @@ public:
         xTaskCreate(&BrainBoardDriver::cliTaskHandle, "EMB-CLI-Handler", 600, this, 1, nullptr);
         xTaskCreate(processMotorRequests, "MotorTask", 600, motorCommandQueue, 1, nullptr);
         xTaskCreate(processEyeRequests, "EyeTask", 600, eyeControlCommandQueue, 1, nullptr);
+        xTaskCreate(processLEDStripRequests, "LEDStripTask", 600, ledStripCommandQueue, 1, nullptr);
     }
 
     void writeByte(uint8_t byte) {
@@ -67,6 +72,8 @@ private:
 
     static inline BrainBoardDriver* instance_ = nullptr;
     DISPLAY::EyeDisplayDriver* eyeDisplayDriver_;
+    LED::LedStripController* ledStripController_;
+
 
     void setupCliBindings() {
 
@@ -83,6 +90,15 @@ private:
             "Animate Eye <EyeID> <AnimType> <X> <Y> <Duration>", 
             true, nullptr, interpretEyeAnimationRequest);
             
+        addCliCommandBinding(cli_, "L101", 
+            "Set LED Strip Color <R> <G> <B>", 
+            true, nullptr, interpretLEDStripSetColor);
+        addCliCommandBinding(cli_, "L102", 
+            "Set LED Strip Brightness <Brightness>", 
+            true, nullptr, interpretLEDStripSetBrightness);
+        addCliCommandBinding(cli_, "L103", 
+            "Fade LED Strip Color <R> <G> <B> <Delay>", 
+            true, nullptr, interpretLEDStripFade);
     }
 
     static inline void writeChar(EmbeddedCli* embeddedCli, char c) {
@@ -146,6 +162,30 @@ private:
         }
     }
 
+    static void processLEDStripRequests(void* pvParameters) {
+        QueueHandle_t ledStripCommandQueue = (QueueHandle_t)pvParameters;
+        LEDStripCommand command;
+
+        LED::LedStripController* ledStrips = static_cast<LED::LedStripController*>(pvParameters);
+
+        while (true) {
+            if (xQueueReceive(ledStripCommandQueue, &command, portMAX_DELAY) == pdPASS) {
+                switch (command.type) {
+                    case LEDStripCommand::SET_COLOR:
+                        ledStrips->fill(command.color);
+                        ledStrips->show();
+                        break;
+                    case LEDStripCommand::SET_BRIGHTNESS:
+                        ledStrips->setBrightness(command.brightness);
+                        ledStrips->show();
+                        break;
+                    case LEDStripCommand::FADE:
+                        ledStrips->effectFade(command.color, command.fadeDelay);
+                        break;
+                }
+            }
+        }
+    }
 }; // class BrainBoardDriver
 } // namespace COM
 #endif // BRAINBOARD_DRIVER_HPP
