@@ -7,23 +7,28 @@
 #include "embedded_cli.h"
 #include "UART_streamer.hpp"
 #include "board_defines.h"
+
 #include <step_motor.hpp>
+#include <eye_driver.hpp>
+
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
 
-#define CLI_PROCESSING_PERIOD 100
-#define UART_RECEIVE_TASK_PERIOD 10
+#define CLI_PROCESSING_PERIOD       100
+#define UART_RECEIVE_TASK_PERIOD    10
 
 namespace COM {
 
 // Global, but namespace limited Queues:
 QueueHandle_t motorCommandQueue;
+QueueHandle_t eyeControlCommandQueue;
 
 class BrainBoardDriver {
 public:
-    BrainBoardDriver(const uint32_t baudRate, const uint8_t txPin, const uint8_t rxPin, EmbeddedCli* cli) :
-        uart_driver_(baudRate, txPin, rxPin), cli_(cli) {
+    BrainBoardDriver(const uint32_t baudRate, const uint8_t txPin, 
+    const uint8_t rxPin, EmbeddedCli* cli, DISPLAY::EyeDisplayDriver* eyeDisplayDriver) :
+        uart_driver_(baudRate, txPin, rxPin), cli_(cli), eyeDisplayDriver_(eyeDisplayDriver) {
         instance_ = this;
         initialize();
         cli->writeChar = writeChar;
@@ -31,8 +36,9 @@ public:
 
         // Queeue Creation: 
         motorCommandQueue = xQueueCreate(10, sizeof(MotorCommand));
+        eyeControlCommandQueue = xQueueCreate(10, sizeof(EyeControlCommand));
 
-        if (motorCommandQueue == nullptr) {
+        if (motorCommandQueue == nullptr || eyeControlCommandQueue == nullptr) {
             printf("Failed to create command queues\n");
         }
     }
@@ -46,8 +52,9 @@ public:
     }
 
     void startTasks() {
-        xTaskCreate(&BrainBoardDriver::cliTask, "CLITask", 600, this, 1, nullptr);
-        xTaskCreate(motorTask, "MotorTask", 600, motorCommandQueue, 1, nullptr);
+        xTaskCreate(&BrainBoardDriver::cliTaskHandle, "EMB-CLI-Handler", 600, this, 1, nullptr);
+        xTaskCreate(processMotorRequests, "MotorTask", 600, motorCommandQueue, 1, nullptr);
+        xTaskCreate(processEyeRequests, "EyeTask", 600, eyeControlCommandQueue, 1, nullptr);
     }
 
     void writeByte(uint8_t byte) {
@@ -59,17 +66,30 @@ private:
     EmbeddedCli* cli_;
 
     static inline BrainBoardDriver* instance_ = nullptr;
+    DISPLAY::EyeDisplayDriver* eyeDisplayDriver_;
 
     void setupCliBindings() {
-        addCliCommandBinding(cli_, "M101", "Configure Motor D<MotorID> S<Speed>", true, nullptr, configureMotor);
-        addCliCommandBinding(cli_, "M102", "Control Motor <MotorID> <start|stop>", true, nullptr, controlMotor);
+
+        addCliCommandBinding(cli_, "M101", 
+            "Configure Motor D<MotorID> S<Speed>", 
+            true, nullptr, interpretMotorConfigureRequest);
+        addCliCommandBinding(cli_, "M102", "Control Motor <MotorID> <start|stop>", 
+            true, nullptr, interpretMotorControlRequest);
+
+        addCliCommandBinding(cli_, "E101", 
+            "Move Eye <EyeID> <X> <Y> <Duration>", 
+            true, nullptr, interpretEyeMovementRequest);
+        addCliCommandBinding(cli_, "E102", 
+            "Animate Eye <EyeID> <AnimType> <X> <Y> <Duration>", 
+            true, nullptr, interpretEyeAnimationRequest);
+            
     }
 
     static inline void writeChar(EmbeddedCli* embeddedCli, char c) {
         instance_->writeByte(static_cast<uint8_t>(c));
     }
 
-    static void cliTask(void* pvParameters) {
+    static void cliTaskHandle(void* pvParameters) {
         BrainBoardDriver* driver = static_cast<BrainBoardDriver*>(pvParameters);
         SERIAL::uart_buffer_t rxBuffer;
 
@@ -86,7 +106,7 @@ private:
         }
     }
 
-    static void motorTask(void* pvParameters) {
+    static void processMotorRequests(void* pvParameters) {
         QueueHandle_t motorCommandQueue = (QueueHandle_t)pvParameters;
         MotorCommand command;
 
@@ -110,6 +130,22 @@ private:
             }
         }
     }
+
+    static void processEyeRequests(void* pvParameters) {
+        QueueHandle_t eyeControlCommandQueue = (QueueHandle_t)pvParameters;
+        EyeControlCommand command;
+
+        while (true) {
+            if (xQueueReceive(eyeControlCommandQueue, &command, portMAX_DELAY) == pdPASS) {
+                if (instance_ && instance_->eyeDisplayDriver_) {
+                    instance_->eyeDisplayDriver_->handleEyeCommand(command);
+                } else {
+                    printf("Eye display driver not initialized\n");
+                }
+            }
+        }
+    }
+
 }; // class BrainBoardDriver
 } // namespace COM
 #endif // BRAINBOARD_DRIVER_HPP

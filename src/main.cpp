@@ -29,21 +29,26 @@ int main() {
     lv_init();
     lv_port_disp_init();
 
-    lv_disp_t *disp1 = lv_disp_get_default();
-    lv_disp_t *disp2 = lv_disp_get_next(disp1);
-
-    DISPLAY::EyeDisplayDriver driver(disp1, disp2);
-
     // Initialize CLI
     EmbeddedCliConfig* config = embeddedCliDefaultConfig();
     EmbeddedCli* cli = embeddedCliNew(config);
 
-    COM::BrainBoardDriver commDriver(UART_BAUD_RATE, UART_TX_PIN, UART_RX_PIN, cli); 
+    lv_disp_t *disp1 = lv_disp_get_default();
+    lv_disp_t *disp2 = lv_disp_get_next(disp1);
+
+    DISPLAY::EyeDisplayDriver* driver = new DISPLAY::EyeDisplayDriver(disp1, disp2);
+    // DISPLAY::EyeDisplayDriver driver(disp1, disp2);
+    xTaskCreate(driver->displayHandler, "display_task", 800, driver, 2, NULL);
+
+    COM::BrainBoardDriver commDriver(UART_BAUD_RATE, UART_TX_PIN, UART_RX_PIN, cli, driver); 
 
     // Start CLI processing task
     commDriver.startTasks();
+
     vTaskStartScheduler();
 
     while (true) {;}
+    delete driver;
+
     return 0;
 }
