@@ -36,7 +36,7 @@ if (NOT PICO_SDK_PATH)
                     GIT_REPOSITORY https://github.com/raspberrypi/pico-sdk
                     GIT_TAG master
                     GIT_SUBMODULES_RECURSE FALSE
-                    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/SDK
+                    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/pico-sdk
             )
         else ()
             FetchContent_Declare(
