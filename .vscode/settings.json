@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "*.py": "python",
-        "cstdint": "cpp"
+        "cstdint": "cpp",
+        "cstdlib": "cpp"
     }
 }

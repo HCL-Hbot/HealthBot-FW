@@ -17,7 +17,6 @@
 */
 
 namespace MOTOR {
-
 class StepMotorDriver {  
 public:
     StepMotorDriver(const uint8_t step_pin, const uint8_t dir_pin, const uint8_t en, const MotorDirection motor_direction = MotorDirection::MOTOR_DIRECTION_CCW) 

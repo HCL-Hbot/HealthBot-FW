@@ -43,25 +43,25 @@ public:
         delete driver;
     }
 
-    void handleEyeCommand(const COM::EyeControlCommand& command) {
-        if (command.type == COM::EyeControlCommand::MOVE) {
-            if (command.eyeId == 0 || command.eyeId == 2) {
-                eyeLeft->animate_to_xy(eyeLeft->getPupil(), command.x, command.y, command.duration);
-            }
-            if (command.eyeId == 1 || command.eyeId == 2) {
-                eyeRight->animate_to_xy(eyeRight->getPupil(), command.x, command.y, command.duration);
-            }
-        } else if (command.type == COM::EyeControlCommand::ANIMATE) {
+    // void handleEyeCommand(const COM::EyeControlCommand& command) {
+    //     if (command.type == COM::EyeControlCommand::MOVE) {
+    //         if (command.eyeId == 0 || command.eyeId == 2) {
+    //             eyeLeft->animate_to_xy(eyeLeft->getPupil(), command.x, command.y, command.duration);
+    //         }
+    //         if (command.eyeId == 1 || command.eyeId == 2) {
+    //             eyeRight->animate_to_xy(eyeRight->getPupil(), command.x, command.y, command.duration);
+    //         }
+    //     } else if (command.type == COM::EyeControlCommand::ANIMATE) {
 
-            if (command.eyeId == 0 || command.eyeId == 2) {
-                eyeLeft->animate_to_xy(eyeLeft->getPupil(), command.x, command.y, command.duration);
-            }
-            if (command.eyeId == 1 || command.eyeId == 2) {
-                eyeRight->animate_to_xy(eyeRight->getPupil(), command.x, command.y, command.duration);
-            }
+    //         if (command.eyeId == 0 || command.eyeId == 2) {
+    //             eyeLeft->animate_to_xy(eyeLeft->getPupil(), command.x, command.y, command.duration);
+    //         }
+    //         if (command.eyeId == 1 || command.eyeId == 2) {
+    //             eyeRight->animate_to_xy(eyeRight->getPupil(), command.x, command.y, command.duration);
+    //         }
 
-        }
-    }
+    //     }
+    // }
 
     static void runEyeControlHandle(void *pvParameters) {
         auto *driver = static_cast<EyeDisplayDriver*>(pvParameters);

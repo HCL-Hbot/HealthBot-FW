@@ -27,6 +27,8 @@
 #include "PicoLedEffect.hpp"
 
 #include <brainboard_driver.hpp>
+#include <step_motor_manager.hpp>
+#include <motor_task.hpp>
 
 #define NUM_LEDS1 30
 #define NUM_LEDS2 60
@@ -48,9 +50,13 @@ int main() {
     LED::LedStripController* ledStrips = new LED::LedStripController(LEDSTRIP1_DATAPIN, NUM_LEDS1, LEDSTRIP2_DATAPIN, NUM_LEDS2);
 
     // DISPLAY::EyeDisplayDriver driver(disp1, disp2);
-    xTaskCreate(driver->displayHandler, "display_task", 800, driver, 2, NULL);
+    //xTaskCreate(driver->displayHandler, "display_task", 800, driver, 2, NULL);
 
-    COM::BrainBoardDriver commDriver(UART_BAUD_RATE, UART_TX_PIN, UART_RX_PIN, cli, driver, ledStrips); 
+    MOTOR::motorManager.addMotor(1, std::make_unique<MOTOR::StepMotorDriver>(1, 2, 0));
+    MOTOR::motorManager.addMotor(2, std::make_unique<MOTOR::StepMotorDriver>(3, 4, 0));
+    MOTOR::startMotorTask();
+
+    COM::BrainBoardDriver commDriver(UART_BAUD_RATE, UART_TX_PIN, UART_RX_PIN, cli); 
 
     commDriver.startTasks();
     vTaskStartScheduler();
