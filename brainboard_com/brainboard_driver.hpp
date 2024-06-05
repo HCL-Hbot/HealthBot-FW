@@ -14,6 +14,7 @@
 #include "queue.h"
 
 #include "motor_driver_binding.hpp"
+#include "display_driver_binding.hpp"
 
 #define CLI_PROCESSING_PERIOD       100
 #define UART_RECEIVE_TASK_PERIOD    100
@@ -37,9 +38,14 @@ public:
 
         // Queeue Creation: 
         motorCommandQueue = xQueueCreate(10, sizeof(MotorCommand));
+        eyeControlCommandQueue = xQueueCreate(10, sizeof(DisplayCommand));
 
         if (motorCommandQueue == nullptr) {
             printf("Failed to create MOTOR command queue.\n");
+        }
+
+        if (eyeControlCommandQueue == nullptr) {
+            printf("Failed to create DISPL command queue.\n");
         }
     }
 
@@ -66,6 +72,7 @@ private:
 
     void setupCliBindings() {
         addMotorCliBindings(cli_);
+        addDisplayCliBindings(cli_);
     }
 
     static inline void writeChar(EmbeddedCli* embeddedCli, char c) {

@@ -52,13 +52,14 @@ int main() {
     // DISPLAY::EyeDisplayDriver driver(disp1, disp2);
     //xTaskCreate(driver->displayHandler, "display_task", 800, driver, 2, NULL);
 
-    MOTOR::motorManager.addMotor(1, std::make_unique<MOTOR::StepMotorDriver>(1, 2, 0));
-    MOTOR::motorManager.addMotor(2, std::make_unique<MOTOR::StepMotorDriver>(3, 4, 0));
-    MOTOR::startMotorTask();
+    // MOTOR::motorManager.addMotor(1, std::make_unique<MOTOR::StepMotorDriver>(MOTOR1_STEP, MOTOR1_DIR, MOTOR1_ENABLE));
+    // MOTOR::motorManager.addMotor(2, std::make_unique<MOTOR::StepMotorDriver>(MOTOR2_STEP, MOTOR2_DIR, MOTOR2_ENABLE));
+    // MOTOR::startMotorTask();
 
     COM::BrainBoardDriver commDriver(UART_BAUD_RATE, UART_TX_PIN, UART_RX_PIN, cli); 
-
+    DISPLAY::startEyeDisplayDriverTask(driver);
     commDriver.startTasks();
+
     vTaskStartScheduler();
 
     while (true) {;}

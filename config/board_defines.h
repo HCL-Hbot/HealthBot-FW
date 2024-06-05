@@ -28,6 +28,7 @@
 #define MOTOR1_ENABLE       18
 #define MOTOR1_STEP         19
 #define MOTOR1_DIR          20
+
 #define MOTOR2_ENABLE       6
 #define MOTOR2_STEP         21
 #define MOTOR2_DIR          22

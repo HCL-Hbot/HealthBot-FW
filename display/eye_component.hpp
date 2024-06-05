@@ -87,15 +87,29 @@ public:
         anim_thinking_expression(anim_obj_thinking, 0);
     }
 
+    void disable() {
+        lv_obj_add_flag(pupil_img, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(iris_img, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(sclera_img, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(anim_obj_confused, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(anim_obj_lid_top, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(anim_obj_lid_bottom, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(anim_obj_thinking, LV_OBJ_FLAG_HIDDEN);
+    }
+
 private:
+/* IMG Objects: */
     lv_obj_t* pupil_img;
     lv_obj_t* iris_img;
     lv_obj_t* sclera_img;
+
+/* ANIMATION Objects: */
     lv_obj_t* anim_obj_confused;
     lv_obj_t* anim_obj_lid_top;
     lv_obj_t* anim_obj_lid_bottom;
     lv_obj_t* anim_obj_thinking;
 
+/* Class Functions: */
     static lv_obj_t* create_image(lv_obj_t* parent, const lv_img_dsc_t* src_img) {
         if (src_img == nullptr) return nullptr; // Safety check
 
@@ -232,87 +246,49 @@ private:
     }
 
     static void anim_thinking_expression(lv_obj_t * TargetObject, int delay) {
-    lv_obj_clear_flag(TargetObject, LV_OBJ_FLAG_HIDDEN);
-    ui_anim_user_data_t * PropertyAnimation_0_user_data = (ui_anim_user_data_t *)lv_mem_alloc(sizeof(ui_anim_user_data_t));
-    PropertyAnimation_0_user_data->target = TargetObject;
-    PropertyAnimation_0_user_data->val = -1;
-    lv_anim_t PropertyAnimation_0;
-    lv_anim_init(&PropertyAnimation_0);
-    lv_anim_set_time(&PropertyAnimation_0, 100);
-    lv_anim_set_user_data(&PropertyAnimation_0, PropertyAnimation_0_user_data);
-    lv_anim_set_custom_exec_cb(&PropertyAnimation_0, _ui_anim_callback_set_opacity);
-    lv_anim_set_values(&PropertyAnimation_0, 0, 255);
-    lv_anim_set_path_cb(&PropertyAnimation_0, lv_anim_path_ease_in);
-    lv_anim_set_delay(&PropertyAnimation_0, delay + 0);
-    lv_anim_set_deleted_cb(&PropertyAnimation_0, _ui_anim_callback_free_user_data);
-    lv_anim_set_playback_time(&PropertyAnimation_0, 0);
-    lv_anim_set_playback_delay(&PropertyAnimation_0, 0);
-    lv_anim_set_repeat_count(&PropertyAnimation_0, 0);
-    // lv_anim_set_repeat_delay(&PropertyAnimation_0, 50000);
-    lv_anim_set_early_apply(&PropertyAnimation_0, false);
-    lv_anim_start(&PropertyAnimation_0);
+        lv_obj_clear_flag(TargetObject, LV_OBJ_FLAG_HIDDEN);
+        ui_anim_user_data_t * PropertyAnimation_0_user_data = (ui_anim_user_data_t *)lv_mem_alloc(sizeof(ui_anim_user_data_t));
+        PropertyAnimation_0_user_data->target = TargetObject;
+        PropertyAnimation_0_user_data->val = -1;
+        lv_anim_t PropertyAnimation_0;
+        lv_anim_init(&PropertyAnimation_0);
+        lv_anim_set_time(&PropertyAnimation_0, 100);
+        lv_anim_set_user_data(&PropertyAnimation_0, PropertyAnimation_0_user_data);
+        lv_anim_set_custom_exec_cb(&PropertyAnimation_0, _ui_anim_callback_set_opacity);
+        lv_anim_set_values(&PropertyAnimation_0, 0, 255);
+        lv_anim_set_path_cb(&PropertyAnimation_0, lv_anim_path_ease_in);
+        lv_anim_set_delay(&PropertyAnimation_0, delay + 0);
+        lv_anim_set_deleted_cb(&PropertyAnimation_0, _ui_anim_callback_free_user_data);
+        lv_anim_set_playback_time(&PropertyAnimation_0, 0);
+        lv_anim_set_playback_delay(&PropertyAnimation_0, 0);
+        lv_anim_set_repeat_count(&PropertyAnimation_0, 0);
+        // lv_anim_set_repeat_delay(&PropertyAnimation_0, 50000);
+        lv_anim_set_early_apply(&PropertyAnimation_0, false);
+        lv_anim_start(&PropertyAnimation_0);
 
-    /* ROTARY OPACITY */
-    ui_anim_user_data_t * PropertyAnimation_1_user_data = (ui_anim_user_data_t *)lv_mem_alloc(sizeof(ui_anim_user_data_t));
-    PropertyAnimation_1_user_data->target = TargetObject;
-    PropertyAnimation_1_user_data->val = -1;
-    lv_anim_t PropertyAnimation_1;
-    lv_anim_init(&PropertyAnimation_1);
-    lv_anim_set_time(&PropertyAnimation_1, 10);
-    lv_anim_set_user_data(&PropertyAnimation_1, PropertyAnimation_1_user_data);
-    lv_anim_set_custom_exec_cb(&PropertyAnimation_1, _ui_anim_callback_set_opacity);
-    lv_anim_set_values(&PropertyAnimation_1, 255, 0);
-    lv_anim_set_path_cb(&PropertyAnimation_1, lv_anim_path_ease_in);
-    lv_anim_set_delay(&PropertyAnimation_1, delay + 5000);
-    lv_anim_set_deleted_cb(&PropertyAnimation_1, _ui_anim_callback_free_user_data);
-    lv_anim_set_playback_time(&PropertyAnimation_1, 0);
-    lv_anim_set_playback_delay(&PropertyAnimation_1, 0);
-    // lv_anim_set_repeat_count(&PropertyAnimation_1, 0);
-    // lv_anim_set_repeat_delay(&PropertyAnimation_1, 50000);
-    lv_anim_set_early_apply(&PropertyAnimation_1, false);
-    lv_anim_start(&PropertyAnimation_1);
-
-        // lv_obj_clear_flag(TargetObject, LV_OBJ_FLAG_HIDDEN);
-        // ui_anim_user_data_t * PropertyAnimation_0_user_data = (ui_anim_user_data_t *)lv_mem_alloc(sizeof(ui_anim_user_data_t));
-        // PropertyAnimation_0_user_data->target = TargetObject;
-        // PropertyAnimation_0_user_data->val = -1;
-        // lv_anim_t PropertyAnimation_0;
-        // lv_anim_init(&PropertyAnimation_0);
-        // lv_anim_set_time(&PropertyAnimation_0, 25);
-        // lv_anim_set_user_data(&PropertyAnimation_0, PropertyAnimation_0_user_data);
-        // lv_anim_set_custom_exec_cb(&PropertyAnimation_0, _ui_anim_callback_set_opacity);
-        // lv_anim_set_values(&PropertyAnimation_0, 0, 255);
-        // lv_anim_set_path_cb(&PropertyAnimation_0, lv_anim_path_ease_in);
-        // lv_anim_set_delay(&PropertyAnimation_0, delay + 400);
-        // lv_anim_set_deleted_cb(&PropertyAnimation_0, _ui_anim_callback_free_user_data);
-        // // lv_anim_set_playback_time(&PropertyAnimation_0, 0);
-        // // lv_anim_set_playback_delay(&PropertyAnimation_0, 0);
-        // // lv_anim_set_repeat_count(&PropertyAnimation_0, 0);
-        // // lv_anim_set_repeat_delay(&PropertyAnimation_0, 25);
-        // lv_anim_set_early_apply(&PropertyAnimation_0, false);
-        // lv_anim_start(&PropertyAnimation_0);
-
-        // ui_anim_user_data_t * PropertyAnimation_1_user_data = (ui_anim_user_data_t *)lv_mem_alloc(sizeof(ui_anim_user_data_t));
-        // PropertyAnimation_1_user_data->target = TargetObject;
-        // PropertyAnimation_1_user_data->val = -1;
-        // lv_anim_t PropertyAnimation_1;
-        // lv_anim_init(&PropertyAnimation_1);
-        // lv_anim_set_time(&PropertyAnimation_1, 25);
-        // lv_anim_set_user_data(&PropertyAnimation_1, PropertyAnimation_1_user_data);
-        // lv_anim_set_custom_exec_cb(&PropertyAnimation_1, _ui_anim_callback_set_opacity);
-        // lv_anim_set_ready_cb(&PropertyAnimation_1, hide_obj_anim_ready);
-        // lv_anim_set_values(&PropertyAnimation_1, 255, 0);
-        // lv_anim_set_path_cb(&PropertyAnimation_1, lv_anim_path_ease_in);
-        // lv_anim_set_delay(&PropertyAnimation_1, delay + 400);
-        // lv_anim_set_deleted_cb(&PropertyAnimation_1, _ui_anim_callback_free_user_data);
-        // lv_anim_set_playback_time(&PropertyAnimation_1, 0);
-        // lv_anim_set_playback_delay(&PropertyAnimation_1, 0);
+        /* ROTARY OPACITY */
+        ui_anim_user_data_t * PropertyAnimation_1_user_data = (ui_anim_user_data_t *)lv_mem_alloc(sizeof(ui_anim_user_data_t));
+        PropertyAnimation_1_user_data->target = TargetObject;
+        PropertyAnimation_1_user_data->val = -1;
+        lv_anim_t PropertyAnimation_1;
+        lv_anim_init(&PropertyAnimation_1);
+        lv_anim_set_time(&PropertyAnimation_1, 10);
+        lv_anim_set_user_data(&PropertyAnimation_1, PropertyAnimation_1_user_data);
+        lv_anim_set_custom_exec_cb(&PropertyAnimation_1, _ui_anim_callback_set_opacity);
+        lv_anim_set_values(&PropertyAnimation_1, 255, 0);
+        lv_anim_set_path_cb(&PropertyAnimation_1, lv_anim_path_ease_in);
+        lv_anim_set_delay(&PropertyAnimation_1, delay + 5000);
+        lv_anim_set_deleted_cb(&PropertyAnimation_1, _ui_anim_callback_free_user_data);
+        lv_anim_set_playback_time(&PropertyAnimation_1, 0);
+        lv_anim_set_playback_delay(&PropertyAnimation_1, 0);
         // lv_anim_set_repeat_count(&PropertyAnimation_1, 0);
-        // lv_anim_set_repeat_delay(&PropertyAnimation_1, 25);
-        // lv_anim_set_early_apply(&PropertyAnimation_1, false);
-        // lv_anim_start(&PropertyAnimation_1);
+        // lv_anim_set_repeat_delay(&PropertyAnimation_1, 50000);
+        lv_anim_set_early_apply(&PropertyAnimation_1, false);
+        lv_anim_start(&PropertyAnimation_1);
+
     }
 
+/* Helper Functions: */
     static void hide_obj_anim_ready(lv_anim_t *anim) {
         auto *user_data = static_cast<ui_anim_user_data_t *>(lv_anim_get_user_data(anim));
         lv_obj_add_flag(user_data->target, LV_OBJ_FLAG_HIDDEN);
