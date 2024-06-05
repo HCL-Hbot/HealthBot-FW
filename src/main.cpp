@@ -25,13 +25,33 @@
 #include <Effects/Fade.hpp>
 #include "PicoLedEffect.hpp"
 
+enum ColorFormat
+{
+    RGB = PicoLed::FORMAT_RGB,
+    GRB = PicoLed::FORMAT_GRB,
+    WRGB = PicoLed::FORMAT_WRGB
+};
+
+
 #define NUM_LEDS1 30
 #define NUM_LEDS2 60
 
+#define FORMAT_LEDS1 GRB
+#define FORMAT_LEDS2 GRB
+
 #define LED_BRIGHTNESS 100
 
+#define ledsOnTime 5000     // Milliseconds to keep the leds ON
+#define ledsOffTime 5000    // Milliseconds to keep the leds OFF
+#define fadeIntervalTime 15 // Time in between .show() in fade functions, recommended to not make it significantly higher
+
 static inline SERIAL::UART_RTOS_Driver uartStreamer{UART_BAUD_RATE, UART_TX_PIN, UART_RX_PIN};
-static inline LED::LedStripController ledStrips(LEDSTRIP1_DATAPIN, NUM_LEDS1, LEDSTRIP2_DATAPIN, NUM_LEDS2);
+static inline LED::LedStripController ledStrips(
+    LEDSTRIP1_DATAPIN,
+    NUM_LEDS1,
+    static_cast<PicoLed::DataFormat>(FORMAT_LEDS1),
+    LEDSTRIP2_DATAPIN, NUM_LEDS2,
+    static_cast<PicoLed::DataFormat>(FORMAT_LEDS2));
 
 void uart_task(void *Pvarg)
 {
@@ -78,50 +98,46 @@ static void uart_send_task(void *params)
 
 static void ledstrip_task(void *params)
 {
-    ledStrips.setBrightness(LED_BRIGHTNESS);
-    ledStrips.fill(PicoLed::GRB(0, 255, 0));
-    ledStrips.show();
-    // sleep_ms(2000);
     ledStrips.clear();
 
     while (1)
     {
+        /* Automatic fade in and fade out*/
+        ledStrips.fadeInOut(PicoLed::RGB(255, 255, 0), ledsOnTime, fadeIntervalTime);
+        vTaskDelay(ledsOffTime);
 
-        for (int i = 0; i < 255; i++)
-        {
-            ledStrips.fill(PicoLed::GRB(i, i, 0));
-            ledStrips.show();
-            vTaskDelay(pdMS_TO_TICKS(15));
-        }
-        vTaskDelay(pdMS_TO_TICKS(5000));
-        for (int i = 255; i > 0; i--)
-        {
-            ledStrips.fill(PicoLed::GRB(i, i, 0));
-            ledStrips.show();
-            vTaskDelay(pdMS_TO_TICKS(10));
-        }
+        /* Manually fading in or out */
+        ledStrips.fadeIn(PicoLed::RGB(0, 128, 128), fadeIntervalTime);
+        vTaskDelay(ledsOnTime);
+        ledStrips.fadeOut(PicoLed::RGB(128, 128, 0), fadeIntervalTime);
+        vTaskDelay(ledsOffTime);
+        
 
-        vTaskDelay(pdMS_TO_TICKS(5000));
+        /* Effect fade wont work, no delay can be seen */
+        // ledStrips.fadeValue(PicoLed::RGB(0, 0, 255), 255);
+        // vTaskDelay(pdMS_TO_TICKS(3000));
+        // ledStrips.effectFade(PicoLed::RGB(255, 0, 0), 128);
+        // vTaskDelay(pdMS_TO_TICKS(3000));
     }
 }
 
 int main()
 {
     stdio_init_all();
-    lv_init();
-    lv_port_disp_init();
+    // lv_init();
+    // lv_port_disp_init();
+
+    ledStrips.setBrightness(LED_BRIGHTNESS);
+    ledStrips.clear();
 
     lv_disp_t *disp1 = lv_disp_get_default();
     lv_disp_t *disp2 = lv_disp_get_next(disp1);
 
     DISPLAY::EyeDisplayDriver driver(disp1, disp2);
 
-    ledStrips.fillRainbow(NUM_LEDS1, NUM_LEDS2);
-    ledStrips.show();
-
-    xTaskCreate(driver.displayHandler, "display_task", 800, &driver, 1, NULL);
-    xTaskCreate(driver.runEyeControlHandle, "uart_task", 1700, &driver, 2, NULL);
-    xTaskCreate(uart_task, "uart_task", 360, nullptr, 1, nullptr);
+    // xTaskCreate(driver.displayHandler, "display_task", 800, &driver, 1, NULL);
+    // xTaskCreate(driver.runEyeControlHandle, "uart_task", 1700, &driver, 2, NULL);
+    // xTaskCreate(uart_task, "uart_task", 360, nullptr, 1, nullptr);
     xTaskCreate(ledstrip_task, "ledstrip_task", 1700, &ledStrips, 1, NULL);
 
     vTaskStartScheduler();
