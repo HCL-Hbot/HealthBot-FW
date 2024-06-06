@@ -2,6 +2,7 @@
     "files.associations": {
         "*.py": "python",
         "cstdint": "cpp",
-        "cstdlib": "cpp"
+        "cstdlib": "cpp",
+        "compare": "cpp"
     }
 }

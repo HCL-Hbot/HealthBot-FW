@@ -30,6 +30,9 @@ public:
         gpio_set_dir(dir_pin, GPIO_OUT);
         gpio_init(en_pin);
         gpio_set_dir(en_pin, GPIO_OUT);
+
+        printf("Motor initialized: step_pin=%d, dir_pin=%d, en_pin=%d\n", step_pin, dir_pin, en_pin);
+        initPulseGenerator(0, 100, 1000); // Default values.
     }
     
     ~StepMotorDriver() {
@@ -67,7 +70,6 @@ public:
         } else if (is_enabled) {
             is_enabled = false;
             current_step_counter = 0;
-            cancel_repeating_timer(&start_pulse_timer);
         }
 
         gpio_put(en_pin, LOW); // Enable the motor driver.
@@ -77,15 +79,14 @@ public:
 
     void reset() {
         current_step_counter = 0;
-        cancel_repeating_timer(&start_pulse_timer);
         add_repeating_timer_us(-current_period_between_us, start_pulse_callback, this, &start_pulse_timer);
     }
 
     void disable() {
-        cancel_repeating_timer(&start_pulse_timer);
         is_initialized = false;
         gpio_put(step_pin, LOW);
         gpio_put(dir_pin, LOW);
+        gpio_put(en_pin, HIGH);
     }
 
     // ATTENTION: TOTALLTY NOT PROPERLY YET. 
@@ -160,14 +161,16 @@ public:
 
 private:   
     const static inline uint16_t motor_steps_per_revolution = 200;      // NEMA17 1.8° per step.
-    const static inline uint16_t microstep_resolution       = 16;      // TMC2209 has integrated interpolation to output 256. 
+    const static inline uint16_t microstep_resolution       = 16;       // TMC2209 has integrated interpolation to output 256. 
     const constexpr static inline uint32_t microsteps_per_revolution = (motor_steps_per_revolution * microstep_resolution); // 51200 microsteps/rev.
-    const constexpr static inline float step_deg_resolution = (360.0f/microsteps_per_revolution);                     // 0.00703125° per step.
-    const constexpr static inline float steps_per_deg       = (1.0f/step_deg_resolution); // 142.857 steps/1.0°.
+    const constexpr static inline float step_deg_resolution = (360.0f / microsteps_per_revolution);                     // 0.00703125° per step.
+    const constexpr static inline float steps_per_deg       = (1.0f / step_deg_resolution); // 142.857 steps/1.0°.
     
-    // From desk lab experiment:
-    const static inline int16_t min_pulse_width_us = 30;
-    const static inline int16_t min_period_between_us = 100;
+    // From desk lab experiment: according to the datasheet the minimal pulse width is 20us, 
+    // but this is not recommended because some steps will be skipped 
+    // (althoug through measurements the step width is consistently 20us)
+    const static inline int16_t min_pulse_width_us      = 30;
+    const static inline int16_t min_period_between_us   = 100;
 
     const uint8_t step_pin;
     const uint8_t dir_pin;
@@ -177,6 +180,8 @@ private:
     bool is_enabled;
 
     repeating_timer_t start_pulse_timer;
+    repeating_timer_t end_pulse_timer;
+
     uint32_t current_step_counter;
     uint32_t target_step_counter;
     int64_t current_pulse_width_us;
@@ -189,7 +194,7 @@ private:
         controller->is_enabled = true;
 
         if (controller->current_step_counter >= controller->target_step_counter) {
-            gpio_put(controller->dir_pin, LOW);
+            controller->disable();
             controller->is_enabled = false;
             return false; // Target Value reached.
         }
@@ -198,8 +203,8 @@ private:
         controller->current_step_counter++;
 
         // Schedule the end of the pulse:
-        static repeating_timer_t end_pulse_timer;
-        add_repeating_timer_us(-controller->current_pulse_width_us, end_pulse_callback, controller, &end_pulse_timer);
+        add_repeating_timer_us(-controller->current_pulse_width_us, 
+            end_pulse_callback, controller, &controller->end_pulse_timer);
         return true;
     }
 

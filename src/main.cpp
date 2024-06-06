@@ -30,9 +30,9 @@
 #include <step_motor_manager.hpp>
 #include <motor_task.hpp>
 
-#define NUM_LEDS1 30
-#define NUM_LEDS2 60
-#define LED_BRIGHTNESS 100
+#define NUM_LEDS1           30
+#define NUM_LEDS2           60
+#define LED_BRIGHTNESS      100
 
 int main() {
     stdio_init_all();
@@ -49,15 +49,13 @@ int main() {
     DISPLAY::EyeDisplayDriver* driver = new DISPLAY::EyeDisplayDriver(disp1, disp2);
     LED::LedStripController* ledStrips = new LED::LedStripController(LEDSTRIP1_DATAPIN, NUM_LEDS1, LEDSTRIP2_DATAPIN, NUM_LEDS2);
 
-    // DISPLAY::EyeDisplayDriver driver(disp1, disp2);
-    //xTaskCreate(driver->displayHandler, "display_task", 800, driver, 2, NULL);
-
-    // MOTOR::motorManager.addMotor(1, std::make_unique<MOTOR::StepMotorDriver>(MOTOR1_STEP, MOTOR1_DIR, MOTOR1_ENABLE));
-    // MOTOR::motorManager.addMotor(2, std::make_unique<MOTOR::StepMotorDriver>(MOTOR2_STEP, MOTOR2_DIR, MOTOR2_ENABLE));
-    // MOTOR::startMotorTask();
+    MOTOR::motorManager.addMotor(1, std::make_unique<MOTOR::StepMotorDriver>(MOTOR1_STEP, MOTOR1_DIR, MOTOR1_ENABLE));
+    MOTOR::motorManager.addMotor(2, std::make_unique<MOTOR::StepMotorDriver>(MOTOR2_STEP, MOTOR2_DIR, MOTOR2_ENABLE));
+    MOTOR::startMotorTask();
 
     COM::BrainBoardDriver commDriver(UART_BAUD_RATE, UART_TX_PIN, UART_RX_PIN, cli); 
     DISPLAY::startEyeDisplayDriverTask(driver);
+
     commDriver.startTasks();
 
     vTaskStartScheduler();
