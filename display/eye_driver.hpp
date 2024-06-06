@@ -30,6 +30,11 @@ public:
 
     ~EyeDisplayDriver() {}
 
+    void startTasks() {
+        xTaskCreate(EyeDisplayDriver::displayHandler, "EyeDisplayHandler", 1200, this, 1, nullptr);
+        xTaskCreate(EyeDisplayDriver::runCommandHandle, "EyeControlHandle", 1200, this, 1, nullptr);
+    }
+
     static void displayHandler(void *pvParameters) {
         auto *driver = static_cast<EyeDisplayDriver*>(pvParameters);
         lv_init();
@@ -51,11 +56,6 @@ public:
                 driver->handleEyeCommand(command);
             }
         }
-    }
-
-    static void runEyeControlHandle(void *pvParameters) {
-        auto *driver = static_cast<EyeDisplayDriver*>(pvParameters);
-
     }
 
 private:
@@ -106,14 +106,6 @@ private:
                 break;
         }
     }
-
 }; // class EyeDisplayDriver
-
-/* TAKS */
-void startEyeDisplayDriverTask(EyeDisplayDriver* driver) {
-    xTaskCreate(EyeDisplayDriver::displayHandler, "EyeDisplayHandler", 1200, driver, 1, nullptr);
-    xTaskCreate(EyeDisplayDriver::runCommandHandle, "EyeControlHandle", 1200, driver, 1, nullptr);
-}
-
 } // namespace DISPLAY
 #endif // EYE_DISPLAY_DRIVER_HPP
