@@ -36,7 +36,6 @@ public:
     }
 
     static void displayHandler(void *pvParameters) {
-        auto *driver = static_cast<EyeDisplayDriver*>(pvParameters);
         lv_init();
         lv_port_disp_init();
 

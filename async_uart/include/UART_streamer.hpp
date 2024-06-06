@@ -7,8 +7,12 @@
 #include "hardware/uart.h"
 #include "hardware/irq.h"
 
-#define RX_MAX_BUFFER_PER_FRAME 64
-#define QUEUE_SIZE 2
+#define RX_MAX_BUFFER_PER_FRAME     64
+#define QUEUE_SIZE                  3 // IMPORTANT Variable! 
+/* The Queue size determines how many command contexts there could be buffered 
+at a command burst. When durin the GUI dev you encounter a situation were you send 
+the burst command and see it been send but do not get response the queue could be 
+the bottleneck. */
 
 namespace SERIAL {
 

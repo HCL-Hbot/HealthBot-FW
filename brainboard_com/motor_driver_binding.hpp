@@ -151,15 +151,19 @@ static void addMotorCliBindings(EmbeddedCli* cli) {
     addCliCommandBinding(cli, "M101",
         "Set motor speed: MOTOR SET_SPEED <MotorID> <Speed>", 
         true, nullptr, handleSetSpeed);
+
     addCliCommandBinding(cli, "M102", 
         "Set motor rotation angle: MOTOR SET_ROTATION_ANGLE <MotorID> <Angle>", 
         true, nullptr, handleSetRotationAngle);
+
     addCliCommandBinding(cli, "M103", 
         "Set motor direction: MOTOR SET_DIRECTION <MotorID> <Direction>", 
         true, nullptr, handleSetDirection);
+
     addCliCommandBinding(cli, "M104", 
         "Execute motor command: MOTOR EXECUTE <MotorID> <start|stop>", 
         true, nullptr, handleExecute);
+        
     addCliCommandBinding(cli, "M105",
         "Select motor reference: MOTOR SELECT <MotorID>", 
         true, nullptr, handleSelect);

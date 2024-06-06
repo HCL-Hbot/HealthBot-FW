@@ -155,23 +155,23 @@ static void handleDisable(EmbeddedCli* cli, char* args, void* context) {
 
 /* 3 - CLI BINDINGS */
 static void addDisplayCliBindings(EmbeddedCli* cli) {
-    addCliCommandBinding(cli, "DS201",
+    addCliCommandBinding(cli, "DS101",
         "Move display: DISPLAY MOVE <DisplayID> <X_Pos> <Y_Pos> <Duration>", 
         true, nullptr, handleMove);
 
-    addCliCommandBinding(cli, "DS202", 
+    addCliCommandBinding(cli, "DS102", 
         "Blink animation: DISPLAY BLINK_ANIM <DisplayID> <AnimType>", 
         true, nullptr, handleBlinkAnim);
 
-    addCliCommandBinding(cli, "DS203", 
+    addCliCommandBinding(cli, "DS103", 
         "Confused animation: DISPLAY CONFUSED_ANIM <DisplayID> <AnimType>", 
         true, nullptr, handleConfusedAnim);
 
-    addCliCommandBinding(cli, "DS204", 
+    addCliCommandBinding(cli, "DS104", 
         "Thinking animation: DISPLAY THINKING_ANIM <DisplayID> <AnimType>", 
         true, nullptr, handleThinkingAnim);
 
-    addCliCommandBinding(cli, "DS205",
+    addCliCommandBinding(cli, "DS105",
         "Disable display: DISPLAY DISABLE <DisplayID>", 
         true, nullptr, handleDisable);
 }

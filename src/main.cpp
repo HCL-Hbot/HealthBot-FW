@@ -43,8 +43,8 @@ int main() {
     // Initialize CLI
     EmbeddedCliConfig* config = embeddedCliDefaultConfig();
     config->cliBufferSize = 255;
-    config->maxBindingCount = 15;
-    config->cmdBufferSize = 255;
+    config->maxBindingCount = 20;
+    config->cmdBufferSize = 300;
     EmbeddedCli* cli = embeddedCliNew(config);
 
     lv_disp_t *disp1 = lv_disp_get_default();
@@ -72,5 +72,11 @@ int main() {
     vTaskStartScheduler();
 
     while (true) {;}
+
+    delete config;
+    delete cli;
+    delete disp1;
+    delete disp2;
+
     return 0;
 }
