@@ -15,6 +15,7 @@
 
 #include "motor_driver_binding.hpp"
 #include "display_driver_binding.hpp"
+#include "ledstrip_driver_binding.hpp"
 
 #define CLI_PROCESSING_PERIOD       100
 #define UART_RECEIVE_TASK_PERIOD    100
@@ -39,6 +40,7 @@ public:
         // Queeue Creation: 
         motorCommandQueue = xQueueCreate(10, sizeof(MotorCommand));
         eyeControlCommandQueue = xQueueCreate(10, sizeof(DisplayCommand));
+        ledStripCommandQueue = xQueueCreate(10, sizeof(LedstripCommand));
 
         if (motorCommandQueue == nullptr) {
             printf("Failed to create MOTOR command queue.\n");
@@ -46,6 +48,10 @@ public:
 
         if (eyeControlCommandQueue == nullptr) {
             printf("Failed to create DISPL command queue.\n");
+        }
+
+        if (ledStripCommandQueue == nullptr) {
+            printf("Failed to create LEDS command queue.\n");
         }
     }
 
@@ -58,7 +64,7 @@ public:
     }
 
     void startTasks() {
-        xTaskCreate(&BrainBoardDriver::cliTaskHandle, "EMB-CLI-Handler", 700, this, 1, nullptr);
+        xTaskCreate(&BrainBoardDriver::cliTaskHandle, "EMB-CLI-Handler", 900, this, 1, nullptr);
     }
 
     void writeByte(uint8_t byte) {
@@ -71,8 +77,9 @@ private:
     static inline BrainBoardDriver* instance_ = nullptr;
 
     void setupCliBindings() {
-        addMotorCliBindings(cli_);
+        // addMotorCliBindings(cli_);
         addDisplayCliBindings(cli_);
+        addLedstripCliBindings(cli_);
     }
 
     static inline void writeChar(EmbeddedCli* embeddedCli, char c) {

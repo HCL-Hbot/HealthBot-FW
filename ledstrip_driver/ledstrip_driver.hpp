@@ -1,67 +1,68 @@
-#ifndef LEDSTRIP_H
-#define LEDSTRIP_H
+#ifndef LEDSTRIP_DRIVER_HPP
+#define LEDSTRIP_DRIVER_HPP
 
 #include <PicoLed.hpp>
 #include <Effects/Fade.hpp>
+#include <memory>
+#include <map>
 
-namespace LED
-{
-    class LedStripController
-    {
-    public:
-        LedStripController(uint pin1, uint numLeds1, uint pin2, uint numLeds2)
-            : strip1(PicoLed::addLeds<PicoLed::WS2812B>(pio0, 0, pin1, numLeds1, PicoLed::FORMAT_GRB)),
-              strip2(PicoLed::addLeds<PicoLed::WS2812B>(pio1, 0, pin2, numLeds2, PicoLed::FORMAT_GRB))
-        {
-            clear();
-        }
+namespace LED {
 
-        void clear()
-        {
-            strip1.clear();
-            strip2.clear();
-            show();
-        }
-
-        void setBrightness(uint8_t brightness)
-        {
-            strip1.setBrightness(brightness); // Max brightness
-            strip2.setBrightness(brightness);
-        }
-        void fill(PicoLed::Color color)
-        {
-            strip1.fill(color);
-            strip2.fill(color);
-        }
-
-        void show()
-        {
-            strip1.show();
-            strip2.show();
-        }
-
-        void fillRainbow(uint numLeds1, uint numLeds2)
-        {
-            strip1.fillRainbow(0, 255 / numLeds1);
-            strip2.fillRainbow(0, 255 / numLeds2);
-        }
-
-        void fade(PicoLed::Color color, double factor){
-            strip1.fade(color, factor);
-            strip2.fade(color, factor);
-        }
-
-    void effectFade( PicoLed::Color color, double fadeDelay){
-        PicoLed::Fade effectFade(strip2, color, fadeDelay);
-        effectFade.animate();
-        effectFade.reset();
-        //PicoLed::Fade effectFade(strip2, color, fadeRate);
+class LedStripDriver {
+public:
+    LedStripDriver(PIO pio, uint8_t sm, uint8_t pin, uint16_t numLeds, PicoLed::DataFormat format)
+        : strip(PicoLed::addLeds<PicoLed::WS2812B>(pio, sm, pin, numLeds, format)) {
+        turn_off();
     }
 
-    private:
-        PicoLed::PicoLedController strip1;
-        PicoLed::PicoLedController strip2;
+    void turn_off() {
+        strip.clear();
+        show();
+    }
 
-    }; // class LedStripController
+    void set_brightness(const uint8_t brightness) {
+        strip.setBrightness(brightness);
+    }
+
+    void set_color(const PicoLed::Color color) {
+        strip.fill(color);
+        show();
+    }
+
+    void show() {
+        strip.show();
+    }
+
+    void effect_rainbow(const uint16_t numLeds) {
+        strip.fillRainbow(0, 255 / numLeds);
+        show();
+    }
+
+    void effect_fade_in(const PicoLed::Color color, const uint32_t fade_interval_ms) {
+        for (int i = 0; i < 255; i++) {
+            set_color(PicoLed::RGB(color.red * i / 255, color.green * i / 255, color.blue * i / 255));
+            show();
+            vTaskDelay(pdMS_TO_TICKS(fade_interval_ms));
+        }
+    }
+
+    void effect_fade_out(const PicoLed::Color color, const uint32_t fade_interval_ms) {
+        for (int i = 255; i > 0; i--) {
+            set_color(PicoLed::RGB(color.red * i / 255, color.green * i / 255, color.blue * i / 255));
+            show();
+            vTaskDelay(pdMS_TO_TICKS(fade_interval_ms));
+        }
+    }
+
+    void effect_fade_inout(const PicoLed::Color color, const uint32_t keep_on_interval_ms, int fade_interval_ms) {
+        effect_fade_in(color, fade_interval_ms);
+        vTaskDelay(pdMS_TO_TICKS(keep_on_interval_ms));
+        effect_fade_out(color, fade_interval_ms);
+    }
+
+private:
+    PicoLed::PicoLedController strip;
+
+}; // class LedStripDriver
 } // namespace LED
-#endif // LEDSTRIP_H
+#endif // LEDSTRIP_DRIVER_HPP

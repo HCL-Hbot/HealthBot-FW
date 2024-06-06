@@ -36,7 +36,7 @@ public:
     }
     
     ~StepMotorDriver() {
-        disable(); // !Important! Cancel the timer to avoid undefined behavior in cb.
+        disable();
     }
 
     void initPulseGenerator(const uint32_t pulses, int64_t width_us, int64_t period_between_us) {
