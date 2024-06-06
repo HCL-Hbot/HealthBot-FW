@@ -85,6 +85,7 @@ if (PICO_CYW43_SUPPORTED)
       ${CMAKE_CURRENT_LIST_DIR}/async_uart
       ${CMAKE_CURRENT_LIST_DIR}/ledstrip_driver
       ${CMAKE_CURRENT_LIST_DIR}/config
+      ${CMAKE_CURRENT_LIST_DIR}/expander_driver
     )
 
     # Select the heap port.  values between 1-4 will pick a heap.
@@ -127,6 +128,7 @@ if (PICO_CYW43_SUPPORTED)
         ASYNC_UART
         LEDSTRIP_DRIVER
         STEPMOTOR_DRIVER
+        EXPANDER_DRIVER
         pico_cyw43_arch_lwip_poll
         pico_stdlib
         pico_lwip_mbedtls
@@ -150,3 +152,4 @@ add_subdirectory(display)
 add_subdirectory(motor_driver)
 add_subdirectory(async_uart)
 add_subdirectory(ledstrip_driver)
+add_subdirectory(expander_driver)

@@ -24,6 +24,7 @@
 #include <ledstrip_driver.hpp>
 #include <Effects/Fade.hpp>
 #include "PicoLedEffect.hpp"
+#include <expander_driver.hpp> 
 
 enum ColorFormat
 {
