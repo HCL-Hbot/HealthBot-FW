@@ -134,6 +134,7 @@ if (PICO_CYW43_SUPPORTED)
         pico_lwip_mbedtls
         pico_mbedtls
         hardware_spi
+        hardware_i2c
         freertos_kernel
         freertos_config
         lvgl::lvgl

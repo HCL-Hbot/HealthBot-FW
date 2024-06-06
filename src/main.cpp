@@ -26,6 +26,8 @@
 #include "PicoLedEffect.hpp"
 #include <expander_driver.hpp> 
 
+
+
 enum ColorFormat
 {
     RGB = PicoLed::FORMAT_RGB,
@@ -34,6 +36,7 @@ enum ColorFormat
 };
 
 
+/* Defines for ledstrip, maybe move to seperate file*/
 #define NUM_LEDS1 30
 #define NUM_LEDS2 60
 
@@ -45,6 +48,19 @@ enum ColorFormat
 #define ledsOnTime 5000     // Milliseconds to keep the leds ON
 #define ledsOffTime 5000    // Milliseconds to keep the leds OFF
 #define fadeIntervalTime 15 // Time in between .show() in fade functions, recommended to not make it significantly higher
+/*-------------------------------------------------------------*/
+
+
+/* Defines for I/O Expander, maybe move to seperate file*/
+#define TCA9534_ADDR 0x20 // Define the I2C address for the TCA9534
+
+// Define the I2C instance and pins
+#define I2C_PORT i2c1
+#define I2C_SDA_PIN 26
+#define I2C_SCL_PIN 27
+#define I2C_BAUDRATE 100000
+/*--------------------------------------------------------------*/
+
 
 static inline SERIAL::UART_RTOS_Driver uartStreamer{UART_BAUD_RATE, UART_TX_PIN, UART_RX_PIN};
 static inline LED::LedStripController ledStrips(
@@ -53,6 +69,8 @@ static inline LED::LedStripController ledStrips(
     static_cast<PicoLed::DataFormat>(FORMAT_LEDS1),
     LEDSTRIP2_DATAPIN, NUM_LEDS2,
     static_cast<PicoLed::DataFormat>(FORMAT_LEDS2));
+
+static inline EXPANDER::TCA9534DWR ioExpander(I2C_PORT, TCA9534_ADDR, I2C_SDA_PIN, I2C_SCL_PIN, I2C_BAUDRATE);
 
 void uart_task(void *Pvarg)
 {
@@ -125,8 +143,8 @@ static void ledstrip_task(void *params)
 int main()
 {
     stdio_init_all();
-    // lv_init();
-    // lv_port_disp_init();
+    lv_init();
+    lv_port_disp_init();
 
     ledStrips.setBrightness(LED_BRIGHTNESS);
     ledStrips.clear();
