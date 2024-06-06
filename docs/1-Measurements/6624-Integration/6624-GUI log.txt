@@ -1,0 +1,15 @@
+[Done] exited with code=0 in 1030.258 seconds
+
+[Running] python -u "c:\_2024-DEV\3-SemesterSix\Healthbot-DemoDash\main.py"
+Connected to COM14
+Set head to azimuth 100, elevation 10 with speed 2
+Animation None is not implemented
+Set LED strip 2 color to HSV(207, 255, 229), RGB(0, 126, 229) with Solid Color animation
+Cheek LED clicked
+Set head to azimuth 100, elevation 10 with speed 2
+Animation None is not implemented
+Set LED strip 2 color to HSV(207, 255, 229), RGB(0, 126, 229) with Solid Color animation
+Set head to azimuth 100, elevation 10 with speed 5
+Animation None is not implemented
+Set LED strip 2 color to HSV(164, 255, 229), RGB(0, 229, 168) with Solid Color animation
+Cheek LED clicked
