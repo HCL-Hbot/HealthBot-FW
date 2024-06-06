@@ -77,7 +77,7 @@ private:
     static inline BrainBoardDriver* instance_ = nullptr;
 
     void setupCliBindings() {
-        // addMotorCliBindings(cli_);
+        addMotorCliBindings(cli_);
         addDisplayCliBindings(cli_);
         addLedstripCliBindings(cli_);
     }

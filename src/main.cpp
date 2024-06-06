@@ -42,6 +42,9 @@ int main() {
 
     // Initialize CLI
     EmbeddedCliConfig* config = embeddedCliDefaultConfig();
+    config->cliBufferSize = 255;
+    config->maxBindingCount = 15;
+    config->cmdBufferSize = 255;
     EmbeddedCli* cli = embeddedCliNew(config);
 
     lv_disp_t *disp1 = lv_disp_get_default();

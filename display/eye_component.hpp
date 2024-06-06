@@ -50,7 +50,7 @@ public:
         return anim_obj_thinking;
     }
 
-    static void animate_to_xy(lv_obj_t *obj, int target_x, int target_y, int duration) {
+    void animate_to_xy(lv_obj_t *obj, int target_x, int target_y, int duration) {
         if (obj == nullptr) return; // Safety check
         
         const int start_x = lv_obj_get_x_aligned(obj);
@@ -72,9 +72,15 @@ public:
         lv_anim_set_time(&a_y, duration);
         lv_anim_set_path_cb(&a_y, lv_anim_path_linear);
         lv_anim_start(&a_y);
+
+        if (obj == pupil_img) {
+            last_x_pos = target_x;
+            last_y_pos = target_y;
+        }
     }
 
     void animate_confused() {
+        animate_to_xy(anim_obj_thinking, last_x_pos, last_y_pos, 0);
         anim_confused_expression(anim_obj_confused);
     }
 
@@ -84,6 +90,7 @@ public:
     }
 
     void animate_thinking() {
+        animate_to_xy(anim_obj_thinking, last_x_pos, last_y_pos, 0);
         anim_thinking_expression(anim_obj_thinking, 0);
     }
 
@@ -109,10 +116,13 @@ private:
     lv_obj_t* anim_obj_lid_bottom;
     lv_obj_t* anim_obj_thinking;
 
+/* Buffered Values*/
+    uint8_t last_x_pos = 0;
+    uint8_t last_y_pos = 0;
+
 /* Class Functions: */
     static lv_obj_t* create_image(lv_obj_t* parent, const lv_img_dsc_t* src_img) {
         if (src_img == nullptr) return nullptr; // Safety check
-
         lv_obj_t *img = lv_img_create(parent);
         lv_img_set_src(img, src_img);
         lv_obj_center(img);
