@@ -9,7 +9,9 @@
 #include "ui_helpers.h"
 #include "lvgl.h"
 
+#include "display_driver_binding.hpp"
 #include "eye_component.hpp"
+#include <command_defines.hpp>
 
 namespace DISPLAY {
 
@@ -26,88 +28,83 @@ public:
         }
     }
 
-    ~EyeDisplayDriver() {
+    ~EyeDisplayDriver() {}
+
+    void startTasks() {
+        xTaskCreate(EyeDisplayDriver::displayHandler, "EyeDisplayHandler", 1200, this, 1, nullptr);
+        xTaskCreate(EyeDisplayDriver::runCommandHandle, "EyeControlHandle", 1200, this, 1, nullptr);
     }
 
     static void displayHandler(void *pvParameters) {
-        auto *driver = static_cast<EyeDisplayDriver*>(pvParameters);
         lv_init();
         lv_port_disp_init();
 
-        while (1) {
+        while (true) {
             lv_tick_inc(1);
             vTaskDelay(1 / portTICK_PERIOD_MS);
             lv_task_handler();
         }
-        delete driver;
     }
 
-    static void runEyeControlHandle(void *pvParameters) {
+    static void runCommandHandle(void *pvParameters) {
         auto *driver = static_cast<EyeDisplayDriver*>(pvParameters);
-        driver->eyeMovement();
+        COM::DisplayCommand command;
+
+        while (true) {
+            if (xQueueReceive(COM::eyeControlCommandQueue, &command, portMAX_DELAY) == pdPASS) {
+                driver->handleEyeCommand(command);
+            }
+        }
     }
 
 private:
     std::unique_ptr<EyeComponent> eyeLeft;
     std::unique_ptr<EyeComponent> eyeRight;
 
-   void eyeMovement() {
-        uint8_t state = 0;
-        while (true) {
-            switch (state) {
-                case 0: 
-                    eyeLeft->animate_to_xy(eyeLeft->getPupil(), 27, 27, 150);
-                    eyeRight->animate_to_xy(eyeRight->getPupil(), 27, 27, 200);
-                
-                    eyeRight->animate_to_xy(eyeRight->getThinking(), 27, 27, 200);
+    void handleEyeCommand(const COM::DisplayCommand& command) {
+        switch (command.type) {
+            case COM::DisplayCommandType::MOVE_:
+                if (command.displayId == 0 || command.displayId == 2) {
+                    eyeLeft->animate_to_xy(eyeLeft->getPupil(), command.x_pos, command.y_pos, command.duration);
+                }
+                if (command.displayId == 1 || command.displayId == 2) {
+                    eyeRight->animate_to_xy(eyeRight->getPupil(), command.x_pos, command.y_pos, command.duration);
+                }
+                break;
+            case COM::DisplayCommandType::BLINK_ANIM:
+                if (command.displayId == 0 || command.displayId == 2) {
+                    eyeLeft->animate_blink();
+                }
+                if (command.displayId == 1 || command.displayId == 2) {
+                    eyeRight->animate_blink();
+                }
+                break;
+            case COM::DisplayCommandType::CONFUSED_ANIM:
+                if (command.displayId == 0 || command.displayId == 2) {
+                    eyeLeft->animate_confused();
+                }
+                if (command.displayId == 1 || command.displayId == 2) {
+                    eyeRight->animate_confused();
+                }
+                break;
+            case COM::DisplayCommandType::THINKING_ANIM:
+                if (command.displayId == 0 || command.displayId == 2) {
+                    eyeLeft->animate_thinking();
+                }
+                if (command.displayId == 1 || command.displayId == 2) {
                     eyeRight->animate_thinking();
-
-                    // eyeLeft->animate_confused();
-                    state = 1;
-                    break;
-                case 1:
-                    // eyeRight->animate_confused();
-                    eyeLeft->animate_to_xy(eyeLeft->getPupil(), 27, -27, 150);
-                    eyeRight->animate_to_xy(eyeRight->getPupil(), 27, -27, 200);
-                    
-                    eyeRight->animate_thinking();
-                    eyeRight->animate_to_xy(eyeRight->getThinking(), 27, -27, 200);
-                    //eyeRight->animate_thinking();
-
-                    state = 2;
-                    break;
-                case 2:
-                    eyeLeft->animate_to_xy(eyeLeft->getPupil(), -27, -27, 150);
-                    eyeRight->animate_to_xy(eyeRight->getPupil(), -27, -27, 200);
-
-                    eyeRight->animate_thinking();
-                    eyeRight->animate_to_xy(eyeRight->getThinking(), -27, -27, 200);
-                    //eyeRight->animate_thinking();
-
-                    // eyeLeft->animate_confused();
-                    // eyeLeft->animate_blink();
-                    state = 3;
-                    break;
-                case 3:
-                    // eyeRight->animate_confused();
-                    // eyeLeft->animate_blink();
-
-                    eyeLeft->animate_to_xy(eyeLeft->getPupil(), -27, 27, 150);
-                    eyeRight->animate_to_xy(eyeRight->getPupil(), -27, 27, 200);
-
-                    eyeRight->animate_thinking();
-                    eyeRight->animate_to_xy(eyeRight->getThinking(), -27, 27, 200);
-                    //eyeRight->animate_thinking();
-
-                    state = 0;
-                    break;
-            }
-            vTaskDelay(3000 / portTICK_PERIOD_MS);
+                }
+                break;
+            case COM::DisplayCommandType::DISABLE:
+                if (command.displayId == 0 || command.displayId == 2) {
+                    eyeLeft->disable();
+                }
+                if (command.displayId == 1 || command.displayId == 2) {
+                    eyeRight->disable();
+                }
+                break;
         }
     }
-};
-
+}; // class EyeDisplayDriver
 } // namespace DISPLAY
 #endif // EYE_DISPLAY_DRIVER_HPP
-
-

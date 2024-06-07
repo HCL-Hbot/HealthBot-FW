@@ -6,4 +6,5 @@ target_include_directories(DISPLAY INTERFACE
 
 target_link_libraries(DISPLAY INTERFACE
     pico_stdlib
+    BRAINBOARD_COM
 )

@@ -1,26 +1,15 @@
 #ifndef COMMAND_DEFINES_HPP
 #define COMMAND_DEFINES_HPP
 
+#include <PicoLed.hpp>
+#include <embedded_cli.h>
+
 namespace COM {
-struct MotorCommand {
-    enum CommandType { 
-        CONFIGURE, 
-        CONTROL 
-    } type;
 
-    int motorId;
+const static bool addCliCommandBinding(EmbeddedCli* cli, const char* name, const char* help, bool tokenizeArgs, void* context, void (*binding)(EmbeddedCli* cli, char* args, void* context)) {
+    CliCommandBinding commandBinding = { name, help, tokenizeArgs, context, binding };
+    return embeddedCliAddBinding(cli, commandBinding);
+}
 
-    // CONFIGURATION COMMANDS: 
-    int speed;
-
-    // CONTROL COMMANDS:
-    bool start; 
-};
-
-// struct LEDStripCommand {
-//     int ledStripId;
-//     int mode;
-//     int color;
-// };  
 } // namespace COM
 #endif // COMMAND_DEFINES_HPP

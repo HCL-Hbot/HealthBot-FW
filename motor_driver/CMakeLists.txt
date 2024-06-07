@@ -7,4 +7,6 @@ target_include_directories(STEPMOTOR_DRIVER INTERFACE
 target_link_libraries(STEPMOTOR_DRIVER INTERFACE
     pico_stdlib
     hardware_pwm
+
+    BRAINBOARD_COM
 )

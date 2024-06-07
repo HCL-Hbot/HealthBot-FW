@@ -9,6 +9,17 @@
 
 namespace MOTOR {
 
+typedef enum class RotationSpeedDefaults: uint8_t {
+    RPM1   = 1,
+    RPM5   = 5,
+    RPM10  = 10,
+    RPM20  = 20,
+    RPM30  = 30,
+    RPM40  = 40,
+    RPM50  = 50,
+    RPM60  = 60,
+} RotationSpeedDefaults_t;
+
 typedef enum class MotorDirection : uint8_t {
     MOTOR_DIRECTION_CW = 0,
     MOTOR_DIRECTION_CCW = 1

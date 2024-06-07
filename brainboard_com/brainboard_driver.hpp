@@ -2,27 +2,35 @@
 #define BRAINBOARD_DRIVER_HPP
 
 #include "command_defines.hpp"
-#include "command_handlers.hpp"
 
 #include "embedded_cli.h"
 #include "UART_streamer.hpp"
 #include "board_defines.h"
-#include <step_motor.hpp>
+
+#include <eye_driver.hpp>
+
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
 
-#define CLI_PROCESSING_PERIOD 100
-#define UART_RECEIVE_TASK_PERIOD 10
+#include "motor_driver_binding.hpp"
+#include "display_driver_binding.hpp"
+#include "ledstrip_driver_binding.hpp"
+
+#define CLI_PROCESSING_PERIOD       100
+#define UART_RECEIVE_TASK_PERIOD    100
 
 namespace COM {
 
 // Global, but namespace limited Queues:
 QueueHandle_t motorCommandQueue;
+QueueHandle_t eyeControlCommandQueue;
+QueueHandle_t ledStripCommandQueue;
 
 class BrainBoardDriver {
 public:
-    BrainBoardDriver(const uint32_t baudRate, const uint8_t txPin, const uint8_t rxPin, EmbeddedCli* cli) :
+    BrainBoardDriver(const uint32_t baudRate, const uint8_t txPin, 
+    const uint8_t rxPin, EmbeddedCli* cli) :
         uart_driver_(baudRate, txPin, rxPin), cli_(cli) {
         instance_ = this;
         initialize();
@@ -31,23 +39,32 @@ public:
 
         // Queeue Creation: 
         motorCommandQueue = xQueueCreate(10, sizeof(MotorCommand));
+        eyeControlCommandQueue = xQueueCreate(10, sizeof(DisplayCommand));
+        ledStripCommandQueue = xQueueCreate(10, sizeof(LedstripCommand));
 
         if (motorCommandQueue == nullptr) {
-            printf("Failed to create command queues\n");
+            printf("Failed to create MOTOR command queue.\n");
         }
-    }
 
-    void initialize() {
-        uart_driver_.initialize();
+        if (eyeControlCommandQueue == nullptr) {
+            printf("Failed to create DISPL command queue.\n");
+        }
+
+        if (ledStripCommandQueue == nullptr) {
+            printf("Failed to create LEDS command queue.\n");
+        }
     }
 
     ~BrainBoardDriver() {
         uart_driver_.deinitialize();
     }
 
+    void initialize() {
+        uart_driver_.initialize();
+    }
+
     void startTasks() {
-        xTaskCreate(&BrainBoardDriver::cliTask, "CLITask", 600, this, 1, nullptr);
-        xTaskCreate(motorTask, "MotorTask", 600, motorCommandQueue, 1, nullptr);
+        xTaskCreate(&BrainBoardDriver::cliTaskHandle, "EMB-CLI-Handler", 900, this, 1, nullptr);
     }
 
     void writeByte(uint8_t byte) {
@@ -57,22 +74,22 @@ public:
 private:
     SERIAL::UART_RTOS_Driver uart_driver_;
     EmbeddedCli* cli_;
-
     static inline BrainBoardDriver* instance_ = nullptr;
 
     void setupCliBindings() {
-        addCliCommandBinding(cli_, "M101", "Configure Motor D<MotorID> S<Speed>", true, nullptr, configureMotor);
-        addCliCommandBinding(cli_, "M102", "Control Motor <MotorID> <start|stop>", true, nullptr, controlMotor);
+        addMotorCliBindings(cli_);
+        addDisplayCliBindings(cli_);
+        addLedstripCliBindings(cli_);
     }
 
     static inline void writeChar(EmbeddedCli* embeddedCli, char c) {
         instance_->writeByte(static_cast<uint8_t>(c));
     }
 
-    static void cliTask(void* pvParameters) {
+    static void cliTaskHandle(void* pvParameters) {
         BrainBoardDriver* driver = static_cast<BrainBoardDriver*>(pvParameters);
         SERIAL::uart_buffer_t rxBuffer;
-
+        
         while (true) {
             if (driver->uart_driver_.uart_check_rx_non_blocking(&rxBuffer, sizeof(rxBuffer), pdMS_TO_TICKS(UART_RECEIVE_TASK_PERIOD))) {
                 for (uint16_t i = 0; i < rxBuffer.length; i++) {
@@ -81,32 +98,6 @@ private:
                 embeddedCliProcess(driver->cli_);
             } else {
                 taskYIELD();
-            }
-            vTaskDelay(pdMS_TO_TICKS(CLI_PROCESSING_PERIOD));
-        }
-    }
-
-    static void motorTask(void* pvParameters) {
-        QueueHandle_t motorCommandQueue = (QueueHandle_t)pvParameters;
-        MotorCommand command;
-
-        while (true) {
-            if (xQueueReceive(motorCommandQueue, &command, portMAX_DELAY) == pdPASS) {
-                switch (command.type) {
-                    case MotorCommand::CONFIGURE:
-                        printf("Configuring motor %d to speed %d RPM\n", command.motorId, command.speed);
-                        // Add motor configuration logic here
-                        break;
-                    case MotorCommand::CONTROL:
-                        if (command.start) {
-                            printf("Starting motor %d\n", command.motorId);
-                            // Add motor start logic here
-                        } else {
-                            printf("Stopping motor %d\n", command.motorId);
-                            // Add motor stop logic here
-                        }
-                        break;
-                }
             }
         }
     }
