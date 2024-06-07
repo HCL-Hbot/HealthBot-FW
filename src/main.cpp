@@ -28,10 +28,10 @@
 
 #include <brainboard_driver.hpp>
 #include <step_motor_manager.hpp>
-#include <motor_task.hpp>
 #include <ledstrip_manager.hpp>
 
 #include <bgt60ltr11XXX_driver.hpp>
+#include <expander_driver.hpp>
 
 #define NUM_LEDS1           (30 + 1)
 #define NUM_LEDS2           (60 + 1)
@@ -56,20 +56,22 @@ int main() {
 
     DISPLAY::EyeDisplayDriver driver(disp1, disp2);
     LED::LedStripManager ledStripManager;
-    auto strip1 = std::make_unique<LED::LedStripDriver>(pio0, 0, LEDSTRIP1_DATAPIN, NUM_LEDS1, DATA_FORMAT1);
-    ledStripManager.addLedStrip(1, std::move(strip1));
-    auto strip2 = std::make_unique<LED::LedStripDriver>(pio1, 0, LEDSTRIP2_DATAPIN, NUM_LEDS1, DATA_FORMAT1);
-    ledStripManager.addLedStrip(2, std::move(strip2));
+    MOTOR::MotorManager motorManager;
 
-    MOTOR::motorManager.addMotor(1, std::make_unique<MOTOR::StepMotorDriver>(MOTOR1_STEP, MOTOR1_DIR, MOTOR1_ENABLE));
-    MOTOR::motorManager.addMotor(2, std::make_unique<MOTOR::StepMotorDriver>(MOTOR2_STEP, MOTOR2_DIR, MOTOR2_ENABLE));
-    MOTOR::startMotorTask();
+    auto strip1 = std::make_unique<LED::LedStripDriver>(pio0, 0, LEDSTRIP1_DATAPIN, NUM_LEDS1, DATA_FORMAT1);
+    auto strip2 = std::make_unique<LED::LedStripDriver>(pio1, 0, LEDSTRIP2_DATAPIN, NUM_LEDS1, DATA_FORMAT1);
+    
+    ledStripManager.addLedStrip(1, std::move(strip1));
+    ledStripManager.addLedStrip(2, std::move(strip2));
+    motorManager.addMotor(1, std::make_unique<MOTOR::StepMotorDriver>(MOTOR1_STEP, MOTOR1_DIR, MOTOR1_ENABLE));
+    motorManager.addMotor(2, std::make_unique<MOTOR::StepMotorDriver>(MOTOR2_STEP, MOTOR2_DIR, MOTOR2_ENABLE));
+    
+    motorManager.startMotorTask();
+    driver.startTasks();
+    ledStripManager.start();
 
     COM::BrainBoardDriver commDriver(UART_BAUD_RATE, UART_TX_PIN, UART_RX_PIN, cli); 
-
-    driver.startTasks();
     commDriver.startTasks();
-    ledStripManager.start();
 
     vTaskStartScheduler();
 
