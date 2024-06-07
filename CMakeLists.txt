@@ -86,6 +86,7 @@ if (PICO_CYW43_SUPPORTED)
       ${CMAKE_CURRENT_LIST_DIR}/ledstrip_driver
       ${CMAKE_CURRENT_LIST_DIR}/config
       ${CMAKE_CURRENT_LIST_DIR}/brainboard_com
+      ${CMAKE_CURRENT_LIST_DIR}/radar
     )
 
     # Select the heap port.  values between 1-4 will pick a heap.
@@ -128,6 +129,7 @@ if (PICO_CYW43_SUPPORTED)
         ASYNC_UART
         LEDSTRIP_DRIVER
         STEPMOTOR_DRIVER
+        BGT60LTR11XXX
         BRAINBOARD_COM
         pico_cyw43_arch_lwip_poll
         pico_stdlib
@@ -153,3 +155,4 @@ add_subdirectory(motor_driver)
 add_subdirectory(async_uart)
 add_subdirectory(ledstrip_driver)
 add_subdirectory(brainboard_com)
+add_subdirectory(radar)

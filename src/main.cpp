@@ -31,6 +31,8 @@
 #include <motor_task.hpp>
 #include <ledstrip_manager.hpp>
 
+#include <bgt60ltr11XXX_driver.hpp>
+
 #define NUM_LEDS1           (30 + 1)
 #define NUM_LEDS2           (60 + 1)
 #define LED_BRIGHTNESS      100
