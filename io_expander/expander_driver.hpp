@@ -3,15 +3,19 @@
 
 #include <hardware/i2c.h>
 #include <cstdio>
-
+// https://www.ti.com/lit/ds/symlink/tca9534.pdf?ts=1717841612499&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FTCA9534%252Fpart-details%252FTCA9534DWR%253Futm_source%253Dgoogle%2526utm_medium%253Dcpc%2526utm_campaign%253Docb-tistore-promo-app_opn_en-cpc-storeic-google-eu%2526utm_content%253DDevice%2526ds_k%253DTCA9534DWR%2526DCM%253Dyes%2526gad_source%253D1%2526gclid%253DCjwKCAjwmYCzBhA6EiwAxFwfgJVm_uUhwJaAEAKAOJb5Y71rkLtJ0pM1oBkuKKFtShp-oto-MnDVXxoCTzwQAvD_BwE%2526gclsrc%253Daw.ds
 // Define the register addresses for the TCA9534
+
+// Verified: 2021-09-15 from datasheet
 #define INPUT_PORT_REG      0x00
 #define OUTPUT_PORT_REG     0x01
 #define POLARITY_INV_REG    0x02
 #define CONFIG_REG          0x03
-#define INIT_COMMAND        0b11110011 // Not sure if it actually a init command.
+
+#define INIT_COMMAND        0b0 // Not sure if it actually a init command.
 
 namespace EXPANDER {
+
 class TCA9534DWR {
 public:
     // Deleted copy constructor and assignment operator to prevent copying

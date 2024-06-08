@@ -5,7 +5,6 @@
 
 #define HIGH    1
 #define LOW     0
-#define PI      (3.14159f)
 
 namespace MOTOR {
 

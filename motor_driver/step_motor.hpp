@@ -5,6 +5,7 @@
 #include "pico/stdlib.h"
 #include "hardware/pwm.h"
 #include <step_motor_defs.hpp>
+#include <expander_driver.hpp>
 
 /* To do list
  - Add error handling.
@@ -19,8 +20,8 @@
 namespace MOTOR {
 class StepMotorDriver {  
 public:
-    StepMotorDriver(const uint8_t step_pin, const uint8_t dir_pin, const uint8_t en, const MotorDirection motor_direction = MotorDirection::MOTOR_DIRECTION_CCW) 
-        : step_pin(step_pin), dir_pin(dir_pin), en_pin(en), motor_direction(motor_direction) 
+    StepMotorDriver(EXPANDER::TCA9534DWR &expander, const uint8_t step_pin, const uint8_t dir_pin, const uint8_t en, const MotorDirection motor_direction = MotorDirection::MOTOR_DIRECTION_CCW) 
+        : expander_(expander), step_pin(step_pin), dir_pin(dir_pin), en_pin(en), motor_direction(motor_direction) 
     {
         current_step_counter = 0;
         is_initialized = false;
@@ -28,8 +29,11 @@ public:
         gpio_set_dir(step_pin, GPIO_OUT);
         gpio_init(dir_pin);
         gpio_set_dir(dir_pin, GPIO_OUT);
-        gpio_init(en_pin);
-        gpio_set_dir(en_pin, GPIO_OUT);
+
+        expander_.setPin(en_pin, static_cast<bool>(HIGH));
+
+        // gpio_init(en_pin);
+        // gpio_set_dir(en_pin, GPIO_OUT);
 
         printf("Motor initialized: step_pin=%d, dir_pin=%d, en_pin=%d\n", step_pin, dir_pin, en_pin);
         initPulseGenerator(0, 100, 1000); // Default values.
@@ -72,7 +76,7 @@ public:
             current_step_counter = 0;
         }
 
-        gpio_put(en_pin, LOW); // Enable the motor driver.
+        expander_.setPin(en_pin, static_cast<bool>(LOW)); // Enable the motor driver.
         gpio_put(dir_pin, static_cast<bool>(motor_direction));
         add_repeating_timer_us(-current_period_between_us, start_pulse_callback, this, &start_pulse_timer);
     }
@@ -86,7 +90,7 @@ public:
         is_initialized = false;
         gpio_put(step_pin, LOW);
         gpio_put(dir_pin, LOW);
-        gpio_put(en_pin, HIGH);
+        expander_.setPin(en_pin, static_cast<bool>(HIGH));
     }
 
     // ATTENTION: TOTALLTY NOT PROPERLY YET. 
@@ -146,7 +150,7 @@ public:
         if (radian < 0) {
             return; // For now just return, later direction could be reversed.
         }
-        float rotation_in_deg = radian * (180.0f/PI);
+        float rotation_in_deg = radian * (180.0f/M_PI);
         rotateDegree(rotation_in_deg);
     }
 
@@ -171,6 +175,8 @@ private:
     // (althoug through measurements the step width is consistently 20us)
     const static inline int16_t min_pulse_width_us      = 30;
     const static inline int16_t min_period_between_us   = 100;
+
+    EXPANDER::TCA9534DWR &expander_;
 
     const uint8_t step_pin;
     const uint8_t dir_pin;
