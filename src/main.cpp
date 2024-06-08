@@ -59,8 +59,8 @@ int main() {
     uint8_t scl_pin = IO_EXPANDER_SCL;    // Replace with your SCL pin
     uint32_t baudrate = 100'000;
 
-    EXPANDER::TCA9534DWR &expander 
-        = EXPANDER::TCA9534DWR::getInstance(i2c, address, sda_pin, scl_pin, baudrate);
+    EXPANDER::TCA9534XXX &expander 
+        = EXPANDER::TCA9534XXX::getInstance(i2c, address, sda_pin, scl_pin, baudrate);
 
     // Initialize the expander
     if (!expander.init()) {

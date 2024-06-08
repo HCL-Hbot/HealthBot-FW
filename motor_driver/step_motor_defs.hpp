@@ -3,9 +3,6 @@
 
 #include <stdint.h>
 
-#define HIGH    1
-#define LOW     0
-
 namespace MOTOR {
 
 typedef enum class RotationSpeedDefaults: uint8_t {

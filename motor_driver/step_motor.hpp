@@ -20,7 +20,9 @@
 namespace MOTOR {
 class StepMotorDriver {  
 public:
-    StepMotorDriver(EXPANDER::TCA9534DWR &expander, const uint8_t step_pin, const uint8_t dir_pin, const uint8_t en, const MotorDirection motor_direction = MotorDirection::MOTOR_DIRECTION_CCW) 
+    StepMotorDriver(EXPANDER::TCA9534XXX &expander, const uint8_t step_pin, 
+        const uint8_t dir_pin, const uint8_t en, 
+        const MotorDirection motor_direction = MotorDirection::MOTOR_DIRECTION_CCW) 
         : expander_(expander), step_pin(step_pin), dir_pin(dir_pin), en_pin(en), motor_direction(motor_direction) 
     {
         current_step_counter = 0;
@@ -30,8 +32,8 @@ public:
         gpio_init(dir_pin);
         gpio_set_dir(dir_pin, GPIO_OUT);
 
-        expander_.setPin(en_pin, static_cast<bool>(HIGH));
-
+        expander_.setPinDirection(step_pin, EXPANDER::DIRECTION::OUTPUT);
+        expander_.setPin(en_pin, EXPANDER::LEVEL::HIGH);
         // gpio_init(en_pin);
         // gpio_set_dir(en_pin, GPIO_OUT);
 
@@ -76,7 +78,7 @@ public:
             current_step_counter = 0;
         }
 
-        expander_.setPin(en_pin, static_cast<bool>(LOW)); // Enable the motor driver.
+        expander_.setPin(en_pin, EXPANDER::LEVEL::LOW); // Enable the motor driver.
         gpio_put(dir_pin, static_cast<bool>(motor_direction));
         add_repeating_timer_us(-current_period_between_us, start_pulse_callback, this, &start_pulse_timer);
     }
@@ -88,9 +90,9 @@ public:
 
     void disable() {
         is_initialized = false;
-        gpio_put(step_pin, LOW);
-        gpio_put(dir_pin, LOW);
-        expander_.setPin(en_pin, static_cast<bool>(HIGH));
+        gpio_put(step_pin, 0);
+        gpio_put(dir_pin, 0);
+        expander_.setPin(en_pin, EXPANDER::LEVEL::HIGH); // Disable the motor driver.
     }
 
     // ATTENTION: TOTALLTY NOT PROPERLY YET. 
@@ -176,7 +178,7 @@ private:
     const static inline int16_t min_pulse_width_us      = 30;
     const static inline int16_t min_period_between_us   = 100;
 
-    EXPANDER::TCA9534DWR &expander_;
+    EXPANDER::TCA9534XXX &expander_;
 
     const uint8_t step_pin;
     const uint8_t dir_pin;
@@ -205,7 +207,7 @@ private:
             return false; // Target Value reached.
         }
 
-        gpio_put(controller->step_pin, HIGH); // Pulse Start.
+        gpio_put(controller->step_pin, 1); // Pulse Start.
         controller->current_step_counter++;
 
         // Schedule the end of the pulse:
@@ -216,7 +218,7 @@ private:
 
     static bool end_pulse_callback(repeating_timer_t *rt) {
         StepMotorDriver *controller = reinterpret_cast<StepMotorDriver*>(rt->user_data);
-        gpio_put(controller->step_pin, LOW);
+        gpio_put(controller->step_pin, 0);
         return false;
     }
 
