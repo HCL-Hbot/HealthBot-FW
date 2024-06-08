@@ -79,7 +79,7 @@ private:
     const static inline uint8_t spi_clk_pin     = SPI_SCK_RADAR;
     const static inline uint8_t spi_mosi_pin    = SPI_MOSI_RADAR; 
     const static inline uint8_t spi_miso_pin    = SPI_MISO_RADAR; 
-    const static inline uint8_t spi_select_pin  = SPI_CS_RADAR; 
+    const static inline uint8_t spi_select_pin  = 0; //SPI_CS_RADAR; 
     const static inline uint8_t rs_line         = SPI_RS_RADAR;
 
     /* CLASS FUNCTIONS: */

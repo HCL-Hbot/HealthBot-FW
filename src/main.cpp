@@ -63,14 +63,14 @@ int main() {
     
     ledStripManager.addLedStrip(1, std::move(strip1));
     ledStripManager.addLedStrip(2, std::move(strip2));
-    motorManager.addMotor(1, std::make_unique<MOTOR::StepMotorDriver>(MOTOR1_STEP, MOTOR1_DIR, MOTOR1_ENABLE));
-    motorManager.addMotor(2, std::make_unique<MOTOR::StepMotorDriver>(MOTOR2_STEP, MOTOR2_DIR, MOTOR2_ENABLE));
+    // motorManager.addMotor(1, std::make_unique<MOTOR::StepMotorDriver>(MOTOR1_STEP, MOTOR1_DIR, PEXP0_MOTOR1_ENABLE));
+    // motorManager.addMotor(2, std::make_unique<MOTOR::StepMotorDriver>(MOTOR2_STEP, MOTOR2_DIR, PEXP1_MOTOR2_ENABLE));
     
-    motorManager.startMotorTask();
+    // motorManager.startMotorTask();
     driver.startTasks();
     ledStripManager.start();
 
-    COM::BrainBoardDriver commDriver(UART_BAUD_RATE, UART_TX_PIN, UART_RX_PIN, cli); 
+    COM::BrainBoardDriver commDriver(UART_BAUD_RATE, UART_TX_PICO, UART_RX_PICO, cli); 
     commDriver.startTasks();
 
     vTaskStartScheduler();

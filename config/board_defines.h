@@ -1,16 +1,18 @@
 #ifndef BOARD_DEFINES_H
 #define BOARD_DEFINES_H
 
-#define SPI_INST                spi0
+#define SPI_INST                spi1
 #define GC9A01_SPI_BAUD         20000000
 #define SPI_BAUD_RATE_RADAR     20000000
+
+#define UART_BAUD_RATE          115200
 
 #define DISPLAY1_ID 0 
 #define DISPLAY2_ID 1
 
 // Select the board
-#define SELECTED_BOARD                  1
-#define UNIVERSAL_CONNECTOR_BOARD_REV1  0
+// #define SELECTED_BOARD                              
+#define UNIVERSAL_CONNECTOR_BOARD_REV1  1
 
 #ifdef SELECTED_BOARD
 
@@ -54,7 +56,73 @@
 #define SPI_CS_RADAR        2  // Chip Select (CS)
 #define SPI_RS_RADAR        0  // Reset Line
 
-#elif UNIVERSAL_CONNECTOR_BOARD_REV1 
+#elif UNIVERSAL_CONNECTOR_BOARD_REV1
+
+/* SERIAL UART PINS */
+#define UART_TX_PICO        4
+#define UART_RX_PICO        5
+
+// #define UART_TX_PICO        16
+// #define UART_RX_PICO        17
+
+/* RADAR PINS */
+#define SPI_INST_RADAR      spi1
+
+#define RADAR_INT           6
+#define SPI_SCK_RADAR       DISPLAY_SCK
+#define SPI_MISO_RADAR      12
+#define SPI_MOSI_RADAR      DISPLAY_MOSI
+#define SPI_RS_RADAR        18
+#define SPI_CS_RADAR        17
+
+/* DISPLAYS */
+#define DISPLAY_RST2        7
+#define DISPLAY_RST1        MUX_INH // Originallay: 7, after patch: 16
+#define DISPLAY_CMD         8
+#define DISPLAY_CS1         9
+#define DISPLAY_CS2         13
+#define DISPLAY_SCK         10
+#define DISPLAY_MOSI        11
+#define DISPLAY_MISO        SPI_MISO_RADAR // Only initialized, not used.
+
+/* LEDSTRIP */
+#define LEDSTRIP1_DATAPIN   14
+#define LEDSTRIP2_DATAPIN   15
+
+/* LED CHEECKS */
+#define PEXP5_LED_CHEECKS   PEXP5
+#define PEXP4_LED_MOUTH     PEXP4       
+
+/* MOTOR PINS */
+#define MOTOR2_DIR          22
+#define MOTOR2_STEP         21
+#define MOTOR1_DIR          20
+#define MOTOR1_STEP         19
+
+#define PEXP0_MOTOR1_ENABLE PEXP0    
+#define PEXP1_MOTOR2_ENABLE PEXP1
+
+#define PEXP2_MOTOR1_SW     PEXP2
+#define PEXP3_MOTOR2_SW     PEXP3
+
+/* IO EXPANDER */
+#define IO_EXPANDER_INT     28
+#define IO_EXPANDER_SCL     27
+#define IO_EXPANDER_SDA     26
+
+#define PEXP0               0
+#define PEXP1               1
+#define PEXP2               2
+#define PEXP3               3
+#define PEXP4               4
+#define PEXP5               5
+#define PEXP6               6
+#define PEXP7               7
+
+/* UART MUX */
+#define MUX_INH             16
+#define PEXP7_MUX_A         PEXP7     
+#define PEXP6_MUX_B         PEXP6 
 
 #else 
 #error "Please select a board, No pin defines found."
