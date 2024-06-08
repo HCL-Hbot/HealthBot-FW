@@ -68,50 +68,29 @@ int main() {
         return 1;
     }
 
+    const PicoLed::DataFormat DATA_FORMAT1 = PicoLed::DataFormat::FORMAT_RGB;
+    const PicoLed::DataFormat DATA_FORMAT2 = PicoLed::DataFormat::FORMAT_GRB;
+
+    DISPLAY::EyeDisplayDriver driver(disp1, disp2);
+    LED::LedStripManager ledStripManager;
     MOTOR::MotorManager motorManager;
+
+    auto strip1 = std::make_unique<LED::LedStripDriver>(pio0, 0, LEDSTRIP1_DATAPIN, NUM_LEDS1, DATA_FORMAT1);
+    auto strip2 = std::make_unique<LED::LedStripDriver>(pio1, 0, LEDSTRIP2_DATAPIN, NUM_LEDS2, DATA_FORMAT2);
+    
+    ledStripManager.addLedStrip(1, std::move(strip1));
+    ledStripManager.addLedStrip(2, std::move(strip2));
     motorManager.addMotor(1, std::make_unique<MOTOR::StepMotorDriver>(expander, MOTOR1_STEP, MOTOR1_DIR, PEXP0_MOTOR1_ENABLE));
     motorManager.addMotor(2, std::make_unique<MOTOR::StepMotorDriver>(expander, MOTOR2_STEP, MOTOR2_DIR, PEXP1_MOTOR2_ENABLE));
-
-    // Get the motor instance from the MotorManager
-    MOTOR::StepMotorDriver* motor1 = motorManager.getMotor(1);
-    MOTOR::StepMotorDriver* motor2 = motorManager.getMotor(2);
-
-    if (motor1) {
-        // Enable Motor 1
-        // motor1->enable();
-        // printf("Motor 1 enabled\n");
-        // motor1->initPulseGenerator(0, 250, 300);
-        // Perform some operations on Motor 1
-        motor1->rotateAngle(MOTOR::DefaultAngles::ANGLE_90); // Rotate 90 degrees
-        motor2->rotateAngle(MOTOR::DefaultAngles::ANGLE_240); // Rotate 90 degrees
-
-        // Check the speed of Motor 1
-        float speed_dps = motor1->getSpeed_dps();
-        printf("Motor 1 speed: %.2f deg/sec\n", speed_dps);
-    }
-
-    // const PicoLed::DataFormat DATA_FORMAT1 = PicoLed::DataFormat::FORMAT_RGB;
-
-    // DISPLAY::EyeDisplayDriver driver(disp1, disp2);
-    // LED::LedStripManager ledStripManager;
-    // // MOTOR::MotorManager motorManager;
-
-    // auto strip1 = std::make_unique<LED::LedStripDriver>(pio0, 0, LEDSTRIP1_DATAPIN, NUM_LEDS1, DATA_FORMAT1);
-    // auto strip2 = std::make_unique<LED::LedStripDriver>(pio1, 0, LEDSTRIP2_DATAPIN, NUM_LEDS1, DATA_FORMAT1);
     
-    // ledStripManager.addLedStrip(1, std::move(strip1));
-    // ledStripManager.addLedStrip(2, std::move(strip2));
-    // // motorManager.addMotor(1, std::make_unique<MOTOR::StepMotorDriver>(MOTOR1_STEP, MOTOR1_DIR, PEXP0_MOTOR1_ENABLE));
-    // // motorManager.addMotor(2, std::make_unique<MOTOR::StepMotorDriver>(MOTOR2_STEP, MOTOR2_DIR, PEXP1_MOTOR2_ENABLE));
-    
-    // // motorManager.startMotorTask();
-    // driver.startTasks();
-    // ledStripManager.start();
+    motorManager.startMotorTask();
+    driver.startTasks();
+    ledStripManager.start();
 
-    // COM::BrainBoardDriver commDriver(UART_BAUD_RATE, UART_TX_PICO, UART_RX_PICO, cli); 
-    // commDriver.startTasks();
+    COM::BrainBoardDriver commDriver(UART_BAUD_RATE, UART_TX_PICO, UART_RX_PICO, cli); 
+    commDriver.startTasks();
 
-    // vTaskStartScheduler();
+    vTaskStartScheduler();
 
     while (true) {;}
 
