@@ -58,12 +58,14 @@
 
 #elif UNIVERSAL_CONNECTOR_BOARD_REV1
 
-/* SERIAL UART PINS */
-#define UART_TX_PICO        4
-#define UART_RX_PICO        5
+#define UART_INST               uart0
 
-// #define UART_TX_PICO        16
-// #define UART_RX_PICO        17
+/* SERIAL UART PINS */
+#define UART_TX_PICO            0
+#define UART_RX_PICO            1
+
+// #define UART_TX_PICO        4
+// #define UART_RX_PICO        5
 
 /* RADAR PINS */
 #define SPI_INST_RADAR      spi1

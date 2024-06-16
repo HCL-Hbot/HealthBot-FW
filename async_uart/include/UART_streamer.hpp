@@ -6,8 +6,8 @@
 #include "pico/stdlib.h"
 #include "hardware/uart.h"
 #include "hardware/irq.h"
+#include "board_defines.h"
 
-#define UART_INST uart1
 #define RX_MAX_BUFFER_PER_FRAME     64
 #define QUEUE_SIZE                  3 // IMPORTANT Variable! 
 /* The Queue size determines how many command contexts there could be buffered 
