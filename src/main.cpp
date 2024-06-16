@@ -39,6 +39,10 @@
 
 int main() {
     stdio_init_all();
+
+    // Disable timer pausing during debug
+    timer_hw->dbgpause = 0;
+
     lv_init();
     lv_port_disp_init();
 
