@@ -3,6 +3,7 @@
 
 #include "FreeRTOS.h"
 #include "semphr.h"
+#include <cstring>
 #include "pico/stdlib.h"
 #include "hardware/uart.h"
 #include "hardware/irq.h"

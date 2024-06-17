@@ -1,5 +1,6 @@
 add_library(BGT60LTR11XXX STATIC
     src/BGT60LTR11XXX_driver.cpp
+    src/radar_task.cpp
 )
 
 target_include_directories(BGT60LTR11XXX PUBLIC 
@@ -12,4 +13,5 @@ target_link_libraries(BGT60LTR11XXX PUBLIC
     hardware_spi
     freertos_kernel
     freertos_config
+    BRAINBOARD_COM
 )

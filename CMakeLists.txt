@@ -126,6 +126,7 @@ if (PICO_CYW43_SUPPORTED)
 
     target_link_libraries(${PROJECT_NAME} PUBLIC
         cli_bindings
+        embedded_cli_lib
 
         DISPLAY
         ASYNC_UART

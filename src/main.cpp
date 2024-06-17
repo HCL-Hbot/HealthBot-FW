@@ -32,6 +32,7 @@
 
 #include <bgt60ltr11XXX_driver.hpp>
 #include <expander_driver.hpp>
+#include <radar_task.hpp>
 
 #define NUM_LEDS1           (30 + 1)
 #define NUM_LEDS2           (60 + 1)
@@ -93,6 +94,7 @@ int main() {
 
     COM::BrainBoardDriver commDriver(UART_BAUD_RATE, UART_TX_PICO, UART_RX_PICO, cli); 
     commDriver.startTasks();
+    RADAR::startRadarTasks(&commDriver);
 
     vTaskStartScheduler();
 
