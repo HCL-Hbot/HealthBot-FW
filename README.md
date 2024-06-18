@@ -29,6 +29,14 @@ openocd -f universal_connector_board.cfg
 
 Or the Debug J-Link configuration if you connect a JLink Edu Mini on the PICO headers themselves. 
 
+## Flashing
+Run the this command to just flash with openOCD setup: 
+
+``
+openocd -f FW_openOCD_flash.cfg
+``
+
+
 ## Firmware Functional Verification
 The Firmware is functional unit tested through isolated function calls and event/action verification with the serial prints, debug register variables checking and/or visual output. The integration is tested using the [DemoDash](https://github.com/HCL-Hbot/Healthbot-DemoDash) application which is a Healthbot manual control GUI.
 
