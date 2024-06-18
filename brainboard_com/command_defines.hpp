@@ -2,7 +2,7 @@
 #define COMMAND_DEFINES_HPP
 
 #include <PicoLed.hpp>
-#include <embedded_cli.h>
+#include "embedded_cli.h"
 
 namespace COM {
 

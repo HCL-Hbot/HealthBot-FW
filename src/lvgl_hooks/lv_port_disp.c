@@ -106,7 +106,7 @@ static void disp_init(void)
     gpio_set_dir(DISPLAY_RST1, GPIO_OUT);
 
     // Initialize the SPI for the first display
-    spi_init(spi0, GC9A01_SPI_BAUD);
+    spi_init(SPI_INST, GC9A01_SPI_BAUD);
     GC9A01_init(DISPLAY1_ID); // You might want to pass an identifier if both displays use different initial settings
 
     // Initialize the second display

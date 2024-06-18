@@ -9,6 +9,9 @@ target_link_libraries(BRAINBOARD_COM INTERFACE
     ASYNC_UART
     STEPMOTOR_DRIVER
     DISPLAY
-    
+    LED_DRIVER
+
+    BGT60LTR11XXX
+    embedded_cli_lib
     PicoLed
 )
