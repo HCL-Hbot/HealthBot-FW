@@ -29,7 +29,7 @@
             "gdbPath" : "arm-none-eabi-gdb",
 
            // Connect to an already running OpenOCD instance
-            "gdbTarget": "healthbot:3333",
+            "gdbTarget": "healthbot-1:3333",
             //"runToMain": true,
             "runToEntryPoint": "main",
             // Work around for stopping at main on restart

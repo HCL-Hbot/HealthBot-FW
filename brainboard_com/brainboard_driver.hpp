@@ -17,6 +17,7 @@
 #include "display_driver_binding.hpp"
 #include "ledstrip_driver_binding.hpp"
 #include "radar_sensor_binding.hpp"
+#include "led_driver_binding.hpp"
 
 #define CLI_PROCESSING_PERIOD       100
 #define UART_RECEIVE_TASK_PERIOD    100
@@ -28,6 +29,7 @@ inline QueueHandle_t motorCommandQueue;
 inline QueueHandle_t eyeControlCommandQueue;
 inline QueueHandle_t ledStripCommandQueue;
 inline QueueHandle_t radarCommandQueue;
+inline QueueHandle_t leddriver_command_queue;
 
 class BrainBoardDriver {
 public:
@@ -44,20 +46,22 @@ public:
         eyeControlCommandQueue = xQueueCreate(10, sizeof(DisplayCommand));
         ledStripCommandQueue = xQueueCreate(10, sizeof(LedstripCommand));
         radarCommandQueue = xQueueCreate(10, sizeof(RadarCommand));
+        leddriver_command_queue = xQueueCreate(2, sizeof(LedDriverCommand));
 
         if (motorCommandQueue == nullptr) {
             printf("Failed to create MOTOR command queue.\n");
         }
-
         if (eyeControlCommandQueue == nullptr) {
             printf("Failed to create DISPL command queue.\n");
         }
-
         if (ledStripCommandQueue == nullptr) {
             printf("Failed to create LEDS command queue.\n");
         }
         if (radarCommandQueue == nullptr) {
             printf("Failed to create RADAR command queue.\n");
+        }
+        if (leddriver_command_queue == nullptr) {
+            printf("Failed to create LED command queue.\n");
         }
     }
 
@@ -93,6 +97,7 @@ private:
         addDisplayCliBindings(cli_);
         addLedstripCliBindings(cli_);
         addRadarCliBindings(cli_);
+        addLedCliBindings(cli_);
     }
 
     static inline void writeChar(EmbeddedCli* embeddedCli, char c) {

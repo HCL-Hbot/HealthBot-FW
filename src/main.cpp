@@ -33,6 +33,7 @@
 #include <bgt60ltr11XXX_driver.hpp>
 #include <expander_driver.hpp>
 #include <radar_task.hpp>
+#include <led_driver.hpp>
 
 #define NUM_LEDS1           (30 + 1)
 #define NUM_LEDS2           (60 + 1)
@@ -78,6 +79,7 @@ int main() {
 
     DISPLAY::EyeDisplayDriver driver(disp1, disp2);
     LED::LedStripManager ledStripManager;
+    LED::LedDriver ledDriver(expander, PEXP5_LED_CHEECKS); 
     MOTOR::MotorManager motorManager;
 
     auto strip1 = std::make_unique<LED::LedStripDriver>(pio0, 0, LEDSTRIP1_DATAPIN, NUM_LEDS1, DATA_FORMAT1);
@@ -91,6 +93,7 @@ int main() {
     motorManager.startMotorTask();
     driver.startTasks();
     ledStripManager.start();
+    ledDriver.start(&ledDriver);
 
     COM::BrainBoardDriver commDriver(UART_BAUD_RATE, UART_TX_PICO, UART_RX_PICO, cli); 
     commDriver.startTasks();
