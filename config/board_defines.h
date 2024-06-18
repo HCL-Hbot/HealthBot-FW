@@ -19,6 +19,10 @@
 #ifndef BOARD_DEFINES_H
 #define BOARD_DEFINES_H
 
+#define NUM_LEDS1               (30 + 1)
+#define NUM_LEDS2               (60 + 1)
+#define LED_BRIGHTNESS          100
+
 #define DISPLAY1_ID             0 
 #define DISPLAY2_ID             1
 
