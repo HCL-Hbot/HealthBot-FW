@@ -37,7 +37,6 @@
 
 #include <eye_driver.hpp>
 #include <UART_streamer.hpp>
-#include "cli_port.hpp"
 
 #include <ledstrip_driver.hpp>
 #include <Effects/Fade.hpp>

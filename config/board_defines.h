@@ -19,14 +19,8 @@
 #ifndef BOARD_DEFINES_H
 #define BOARD_DEFINES_H
 
-#define SPI_INST                spi1
-#define GC9A01_SPI_BAUD         20000000
-#define SPI_BAUD_RATE_RADAR     20000000
-
-#define UART_BAUD_RATE          115200
-
-#define DISPLAY1_ID 0 
-#define DISPLAY2_ID 1
+#define DISPLAY1_ID             0 
+#define DISPLAY2_ID             1
 
 // Select the board
 // #define SELECTED_BOARD                              
@@ -76,18 +70,23 @@
 
 #elif UNIVERSAL_CONNECTOR_BOARD_REV1
 
+#define SPI_INST                spi1
+#define GC9A01_SPI_BAUD         20000000
+#define SPI_BAUD_RATE_RADAR     20000000
+#define UART_BAUD_RATE          115200
+
 #define UART_INST               uart0
 
 /* SERIAL UART PINS */
 #define UART_TX_PICO            0
 #define UART_RX_PICO            1
 
+/* UART MUX REFS: */
 // #define UART_TX_PICO        4
 // #define UART_RX_PICO        5
 
 /* RADAR PINS */
 #define SPI_INST_RADAR      spi1
-
 #define RADAR_INT           6
 #define SPI_SCK_RADAR       DISPLAY_SCK
 #define SPI_MISO_RADAR      12
@@ -97,7 +96,7 @@
 
 /* DISPLAYS */
 #define DISPLAY_RST2        7
-#define DISPLAY_RST1        MUX_INH // Originallay: 7, after patch: 16
+#define DISPLAY_RST1        MUX_INH // Originallay: 7, after patch: 16, check PATH note.
 #define DISPLAY_CMD         8
 #define DISPLAY_CS1         9
 #define DISPLAY_CS2         13

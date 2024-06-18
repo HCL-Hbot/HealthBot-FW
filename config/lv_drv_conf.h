@@ -31,28 +31,24 @@
 /*********************
  * DELAY INTERFACE
  *********************/
-#define LV_DRV_DELAY_INCLUDE  <time.h>            /*Dummy include by default*/
-#define LV_DRV_DELAY_US(us)  (void)0      /*Delay the given number of microseconds*/
-#define LV_DRV_DELAY_MS(ms)  sleep_ms(ms) //vTaskDelay(ms/portTICK_PERIOD_MS)       /*Delay the given number of milliseconds*/
-
-/*********************
- * DISPLAY INTERFACE
- *********************/
+#define LV_DRV_DELAY_INCLUDE  <time.h>      /*Dummy include by default*/
+#define LV_DRV_DELAY_US(us)  (void)0        /*Delay the given number of microseconds, none ATM */
+#define LV_DRV_DELAY_MS(ms)  sleep_ms(ms)   /*Delay the given number of milliseconds*/
 
 /*------------
  *  Common
  *------------*/
-#define LV_DRV_DISP_INCLUDE        <lvgl_hooks.h> /*Dummy include by default*/
-#define LV_DRV_DISP_CMD_DATA(val)   display_cmd_data(val)   /*Set the command/data pin to 'val'*/
-#define LV_DRV_DISP_RST(display, val)        display_spi_rst(display, val) /*pin_x_set(val)*/    /*Set the reset pin to 'val'*/
+#define LV_DRV_DISP_INCLUDE             <lvgl_hooks.h> /*Dummy include by default*/
+#define LV_DRV_DISP_CMD_DATA(val)       display_cmd_data(val)   /*Set the command/data pin to 'val'*/
+#define LV_DRV_DISP_RST(display, val)   display_spi_rst(display, val) /*pin_x_set(val)*/    /*Set the reset pin to 'val'*/
 
 /*---------
  *  SPI, displays
  *---------*/
-#define LV_DRV_DISP_SPI_CS(display, val)          display_spi_cs(display, val) /*spi_cs_set(val)*/     /*Set the SPI's Chip select to 'val'*/
+#define LV_DRV_DISP_SPI_CS(display, val)          display_spi_cs(display, val)          /*Set the SPI's Chip select to 'val'*/
 
-#define LV_DRV_DISP_SPI_WR_BYTE(display, data)    display_spi_wr_byte(display, data) /*spi_wr(data)*/        /*Write a byte the SPI bus*/
-#define LV_DRV_DISP_SPI_WR_ARRAY(display, adr, n) display_spi_wr_array(display, adr, n) /*spi_wr_mem(adr, n)*/  /*Write 'n' bytes to SPI bus from 'adr'*/
+#define LV_DRV_DISP_SPI_WR_BYTE(display, data)    display_spi_wr_byte(display, data)    /*Write a byte the SPI bus*/
+#define LV_DRV_DISP_SPI_WR_ARRAY(display, adr, n) display_spi_wr_array(display, adr, n) /*Write 'n' bytes to SPI bus from 'adr'*/
 #define LV_DRV_DISP_SPI_MODE(bits, mode) 
 #define LV_DRV_DISP_SPI_FREQ
 

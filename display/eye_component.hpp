@@ -26,6 +26,8 @@
 #include "ui_helpers.h"
 #include "lvgl.h"
 
+/* @NOTE: This class is not elegant, and is generated from Squareline Studio based on the design of the S6-2324 Industrial Designers Groupd */
+
 namespace DISPLAY {
 class EyeComponent {
 public:

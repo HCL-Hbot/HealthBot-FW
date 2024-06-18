@@ -22,6 +22,8 @@
 #include "step_motor.hpp"
 #include <motor_driver_binding.hpp>
 
+#define MOTOR_TASK_STACK_SIZE 700
+
 namespace MOTOR {
 
 class MotorManager {
@@ -40,7 +42,7 @@ public:
     }
 
     void startMotorTask() {
-        xTaskCreate(motorTask, "MotorTask", 700, this, 1, nullptr);
+        xTaskCreate(motorTask, "MotorTask", MOTOR_TASK_STACK_SIZE, this, 1, nullptr);
     }
 
 private:

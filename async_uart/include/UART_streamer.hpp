@@ -130,7 +130,7 @@ public:
 
 private:
     bool isConnected = false;
-    uint32_t baud_rate; 
+    const uint32_t baud_rate; 
     static inline uart_inst_t* uart_port = UART_INST;
     const uint8_t tx_pin;
     const uint8_t rx_pin;

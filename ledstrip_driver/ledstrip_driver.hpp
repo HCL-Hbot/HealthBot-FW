@@ -24,6 +24,8 @@
 #include <memory>
 #include <map>
 
+#define RGB_MAX_VALUE 255
+
 namespace LED {
 
 class LedStripDriver {
@@ -52,21 +54,21 @@ public:
     }
 
     void effect_rainbow(const uint16_t numLeds) {
-        strip.fillRainbow(0, 255 / numLeds);
+        strip.fillRainbow(0, RGB_MAX_VALUE / numLeds);
         show();
     }
 
     void effect_fade_in(const PicoLed::Color color, const uint32_t fade_interval_ms) {
-        for (int i = 0; i < 255; i++) {
-            set_color(PicoLed::RGB(color.red * i / 255, color.green * i / 255, color.blue * i / 255));
+        for (int i = 0; i < RGB_MAX_VALUE; i++) {
+            set_color(PicoLed::RGB(color.red * i / RGB_MAX_VALUE, color.green * i / RGB_MAX_VALUE, color.blue * i / RGB_MAX_VALUE));
             show();
             vTaskDelay(pdMS_TO_TICKS(fade_interval_ms));
         }
     }
 
     void effect_fade_out(const PicoLed::Color color, const uint32_t fade_interval_ms) {
-        for (int i = 255; i > 0; i--) {
-            set_color(PicoLed::RGB(color.red * i / 255, color.green * i / 255, color.blue * i / 255));
+        for (int i = RGB_MAX_VALUE; i > 0; i--) {
+            set_color(PicoLed::RGB(color.red * i / RGB_MAX_VALUE, color.green * i / RGB_MAX_VALUE, color.blue * i / RGB_MAX_VALUE));
             show();
             vTaskDelay(pdMS_TO_TICKS(fade_interval_ms));
         }

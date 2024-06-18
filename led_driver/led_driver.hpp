@@ -22,6 +22,9 @@
 #include <pico/stdlib.h>
 #include <expander_driver.hpp>
 
+#define LED_DRIVER_STACK_SIZE   400
+#define LED_HIGH                1
+
 namespace LED {
 
 class LedDriver {
@@ -47,7 +50,7 @@ public:
             if (xQueueReceive(COM::leddriver_command_queue, &command, portMAX_DELAY) == pdPASS) {
                 switch (command.type) {
                     case COM::LedCommandType::SET_LED:
-                        if (command.turnOn == 1) {
+                        if (command.turnOn == LED_HIGH) {
                             turn_on();
                         } else {
                             turn_off();
@@ -64,7 +67,7 @@ public:
         LedDriver* ledDriver = static_cast<LedDriver*>(pvParameters);
         xTaskCreate([](void* pvParameters) {
             static_cast<LedDriver*>(pvParameters)->runCommandHandle();
-        }, "LedCommandHandle", 400, ledDriver, 1, nullptr);
+        }, "LedCommandHandle", LED_DRIVER_STACK_SIZE, ledDriver, 1, nullptr);
     }
 
 private:

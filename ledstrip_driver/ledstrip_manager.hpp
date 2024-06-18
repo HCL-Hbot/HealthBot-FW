@@ -26,6 +26,8 @@
 
 #include "ledstrip_driver_binding.hpp"
 
+#define LEDSTRIP_MANAGER_STACK_SIZE 1200
+
 namespace LED {
 
 class LedStripManager {
@@ -63,10 +65,10 @@ public:
                             strip->show();
                             break;
                         case COM::LedstripCommandType::ANIM_FADE_OUT:
-                            strip->effect_fade_out(PicoLed::RGB(255, 255, 255), command.data.anim_fade_out.duration);
+                            strip->effect_fade_out(PicoLed::RGB(RGB_MAX_VALUE, RGB_MAX_VALUE, RGB_MAX_VALUE), command.data.anim_fade_out.duration);
                             break;
                         case COM::LedstripCommandType::ANIM_FADE_IN:
-                            strip->effect_fade_in(PicoLed::RGB(255, 255, 255), command.data.anim_fade_in.duration);
+                            strip->effect_fade_in(PicoLed::RGB(RGB_MAX_VALUE, RGB_MAX_VALUE, RGB_MAX_VALUE), command.data.anim_fade_in.duration);
                             break;
                         default:
                             break;
@@ -79,7 +81,7 @@ public:
     void start() {
         xTaskCreate([](void* param) {
             static_cast<LedStripManager*>(param)->runCommandHandle();
-        }, "LedstripCommandHandle", 1200, this, 1, nullptr);
+        }, "LedstripCommandHandle", LEDSTRIP_MANAGER_STACK_SIZE, this, 1, nullptr);
     }
 
 private:

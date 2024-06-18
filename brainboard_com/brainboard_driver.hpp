@@ -39,6 +39,8 @@
 
 #define CLI_PROCESSING_PERIOD       100
 #define UART_RECEIVE_TASK_PERIOD    100
+#define CLI_HANDLER_STACK_SIZE      900
+#define QUEUE_SIZE_DEFUALT          10
 
 namespace COM {
 
@@ -60,11 +62,11 @@ public:
         setupCliBindings();
 
         // Queeue Creation: 
-        motorCommandQueue = xQueueCreate(10, sizeof(MotorCommand));
-        eyeControlCommandQueue = xQueueCreate(10, sizeof(DisplayCommand));
-        ledStripCommandQueue = xQueueCreate(10, sizeof(LedstripCommand));
-        radarCommandQueue = xQueueCreate(10, sizeof(RadarCommand));
-        leddriver_command_queue = xQueueCreate(2, sizeof(LedDriverCommand));
+        motorCommandQueue = xQueueCreate(QUEUE_SIZE_DEFUALT, sizeof(MotorCommand));
+        eyeControlCommandQueue = xQueueCreate(QUEUE_SIZE_DEFUALT, sizeof(DisplayCommand));
+        ledStripCommandQueue = xQueueCreate(QUEUE_SIZE_DEFUALT, sizeof(LedstripCommand));
+        radarCommandQueue = xQueueCreate(QUEUE_SIZE_DEFUALT, sizeof(RadarCommand));
+        leddriver_command_queue = xQueueCreate(QUEUE_SIZE_DEFUALT, sizeof(LedDriverCommand));
 
         if (motorCommandQueue == nullptr) {
             printf("Failed to create MOTOR command queue.\n");
@@ -92,7 +94,7 @@ public:
     }
 
     void startTasks() {
-        xTaskCreate(&BrainBoardDriver::cliTaskHandle, "EMB-CLI-Handler", 900, this, 1, nullptr);
+        xTaskCreate(&BrainBoardDriver::cliTaskHandle, "EMB-CLI-Handler", CLI_HANDLER_STACK_SIZE, this, 1, nullptr);
     }
 
     void writeByte(uint8_t byte) {

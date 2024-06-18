@@ -35,6 +35,9 @@
  - States instead of the two bools.
 */
 
+#define DEFAULT_PULSE_WIDTH_US      100
+#define DEFAULT_PERIOD_BETWEEN_US   1000
+
 namespace MOTOR {
 class StepMotorDriver {  
 public:
@@ -52,11 +55,9 @@ public:
 
         expander_.setPinDirection(step_pin, EXPANDER::DIRECTION::OUTPUT);
         expander_.setPin(en_pin, EXPANDER::LEVEL::HIGH);
-        // gpio_init(en_pin);
-        // gpio_set_dir(en_pin, GPIO_OUT);
 
         printf("Motor initialized: step_pin=%d, dir_pin=%d, en_pin=%d\n", step_pin, dir_pin, en_pin);
-        initPulseGenerator(0, 100, 1000); // Default values.
+        initPulseGenerator(0, DEFAULT_PULSE_WIDTH_US, DEFAULT_PERIOD_BETWEEN_US); // Default values.
     }
     
     ~StepMotorDriver() {

@@ -121,12 +121,7 @@ if (PICO_CYW43_SUPPORTED)
     target_include_directories(ui PUBLIC src/ui)
     target_link_libraries(ui lvgl)
 
-    add_library(cli_bindings STATIC src/cli_hooks/cli_methods.cpp src/cli_hooks/cli_port.cpp)
-    target_include_directories(cli_bindings PUBLIC src/cli_hooks)
-    target_link_libraries(cli_bindings PUBLIC embedded_cli_lib ui STEPMOTOR_DRIVER)
-
     target_link_libraries(${PROJECT_NAME} PUBLIC
-        cli_bindings
         embedded_cli_lib
 
         DISPLAY

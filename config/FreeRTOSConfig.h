@@ -26,12 +26,10 @@
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
-
 /* Use Pico SDK ISR handlers */
 #define vPortSVCHandler         isr_svcall
 #define xPortPendSVHandler      isr_pendsv
 #define xPortSysTickHandler     isr_systick
-
 
 /* Heap and stack.
  * The bytes specified in configTOTAL_HEAP_SIZE need to fit in to

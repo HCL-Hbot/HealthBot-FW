@@ -1,4 +1,25 @@
+/*
+ * Copyright 2024 JUNE - HAN University of Applied Sciences, Health Concept Lab
+ * Project HealthBot
+ * Authors: Victor Hogeweij, Marelle Vink and Richard Kroesen
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+*/
+
 #include <bgt60ltr11XXX_driver.hpp>
+
+#define RESET_DELAY_MS              50
+#define REG_POLL_DELAY              20
 
 namespace BGT60 {
 
@@ -92,7 +113,7 @@ namespace BGT60 {
             if ((init_flag == 1) && (reg0_done == 0)) {
                 break; // Stop Pooling
             }
-            vTaskDelay(pdMS_TO_TICKS(20)); 
+            vTaskDelay(pdMS_TO_TICKS(REG_POLL_DELAY)); 
         }
     }
 
@@ -192,9 +213,9 @@ namespace BGT60 {
         // Reset Bus
         gpio_init(rs_line);
         gpio_set_dir(rs_line, GPIO_OUT);
-        vTaskDelay(pdMS_TO_TICKS(50)); 
+        vTaskDelay(pdMS_TO_TICKS(RESET_DELAY_MS)); 
         gpio_put(SPI_RS_RADAR, 0);
-        vTaskDelay(pdMS_TO_TICKS(50)); 
+        vTaskDelay(pdMS_TO_TICKS(RESET_DELAY_MS)); 
         gpio_put(SPI_RS_RADAR, 1);
     }
 
