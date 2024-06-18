@@ -21,10 +21,6 @@
 
 #include <stdint.h>
 
-#define HIGH    1
-#define LOW     0
-#define PI      (3.14159f)
-
 namespace MOTOR {
 
 typedef enum class RotationSpeedDefaults: uint8_t {

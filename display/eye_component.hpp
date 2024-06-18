@@ -54,10 +54,34 @@ public:
         }
 
     ~EyeComponent() {
-        delete pupil_img;
-        delete iris_img;
-        delete sclera_img;
-        delete anim_obj_confused;
+        if (pupil_img) {
+            lv_obj_del(pupil_img);
+            pupil_img = nullptr;
+        }
+        if (iris_img) {
+            lv_obj_del(iris_img);
+            iris_img = nullptr;
+        }
+        if (sclera_img) {
+            lv_obj_del(sclera_img);
+            sclera_img = nullptr;
+        }
+        if (anim_obj_confused) {
+            lv_obj_del(anim_obj_confused);
+            anim_obj_confused = nullptr;
+        }
+        if (anim_obj_lid_top) {
+            lv_obj_del(anim_obj_lid_top);
+            anim_obj_lid_top = nullptr;
+        }
+        if (anim_obj_lid_bottom) {
+            lv_obj_del(anim_obj_lid_bottom);
+            anim_obj_lid_bottom = nullptr;
+        }
+        if (anim_obj_thinking) {
+            lv_obj_del(anim_obj_thinking);
+            anim_obj_thinking = nullptr;
+        }
     }
 
     lv_obj_t* getPupil() {
@@ -151,6 +175,11 @@ private:
     static void anim_confused_expression(lv_obj_t * TargetObject, int delay = 0) {
         lv_obj_clear_flag(TargetObject, LV_OBJ_FLAG_HIDDEN);
         ui_anim_user_data_t * PropertyAnimation_0_user_data = (ui_anim_user_data_t *)lv_mem_alloc(sizeof(ui_anim_user_data_t));
+        if (!PropertyAnimation_0_user_data) {
+            printf("Failed to allocate memory for PropertyAnimation_0_user_data");
+            return;
+        }
+
         PropertyAnimation_0_user_data->target = TargetObject;
         PropertyAnimation_0_user_data->val = -1;
         lv_anim_t PropertyAnimation_0;
@@ -168,7 +197,12 @@ private:
         lv_anim_set_repeat_delay(&PropertyAnimation_0, 50000);
         lv_anim_set_early_apply(&PropertyAnimation_0, false);
         lv_anim_start(&PropertyAnimation_0);
+
         ui_anim_user_data_t * PropertyAnimation_1_user_data = (ui_anim_user_data_t *)lv_mem_alloc(sizeof(ui_anim_user_data_t));
+        if (!PropertyAnimation_1_user_data) {
+            printf("Failed to allocate memory for PropertyAnimation_1_user_data");
+            return;
+        }
         PropertyAnimation_1_user_data->target = TargetObject;
         PropertyAnimation_1_user_data->val = -1;
 
@@ -193,6 +227,10 @@ private:
     static void Onderkantooglid_Animation(lv_obj_t * TargetObject, int delay) {
         lv_obj_clear_flag(TargetObject, LV_OBJ_FLAG_HIDDEN);
         ui_anim_user_data_t * PropertyAnimation_0_user_data = (ui_anim_user_data_t *)lv_mem_alloc(sizeof(ui_anim_user_data_t));
+            if (!PropertyAnimation_0_user_data) {
+            printf("Failed to allocate memory for PropertyAnimation_0_user_data");
+            return;
+        }
         PropertyAnimation_0_user_data->target = TargetObject;
         PropertyAnimation_0_user_data->val = -1;
         lv_anim_t PropertyAnimation_0;
@@ -213,6 +251,10 @@ private:
         lv_anim_start(&PropertyAnimation_0);
         
         ui_anim_user_data_t * PropertyAnimation_1_user_data = (ui_anim_user_data_t *)lv_mem_alloc(sizeof(ui_anim_user_data_t));
+        if (!PropertyAnimation_1_user_data) {
+            printf("Failed to allocate memory for PropertyAnimation_1_user_data");
+            return;
+        }
         PropertyAnimation_1_user_data->target = TargetObject;
         PropertyAnimation_1_user_data->val = -1;
         lv_anim_t PropertyAnimation_1;
@@ -235,6 +277,10 @@ private:
     static void bovenkantooglid_Animation(lv_obj_t * TargetObject, int delay) {
         lv_obj_clear_flag(TargetObject, LV_OBJ_FLAG_HIDDEN);
         ui_anim_user_data_t * PropertyAnimation_0_user_data = (ui_anim_user_data_t *)lv_mem_alloc(sizeof(ui_anim_user_data_t));
+        if (!PropertyAnimation_0_user_data) {
+            LV_LOG_WARN("Failed to allocate memory for PropertyAnimation_0_user_data");
+            return;
+        }
         PropertyAnimation_0_user_data->target = TargetObject;
         PropertyAnimation_0_user_data->val = -1;
         lv_anim_t PropertyAnimation_0;
@@ -253,7 +299,12 @@ private:
         lv_anim_set_early_apply(&PropertyAnimation_0, false);
         lv_anim_set_get_value_cb(&PropertyAnimation_0, &_ui_anim_callback_get_y);
         lv_anim_start(&PropertyAnimation_0);
+
         ui_anim_user_data_t * PropertyAnimation_1_user_data = (ui_anim_user_data_t *)lv_mem_alloc(sizeof(ui_anim_user_data_t));
+        if (!PropertyAnimation_1_user_data) {
+            LV_LOG_WARN("Failed to allocate memory for PropertyAnimation_1_user_data");
+            return;
+        }
         PropertyAnimation_1_user_data->target = TargetObject;
         PropertyAnimation_1_user_data->val = -1;
         lv_anim_t PropertyAnimation_1;
@@ -276,6 +327,10 @@ private:
     static void anim_thinking_expression(lv_obj_t * TargetObject, int delay) {
         lv_obj_clear_flag(TargetObject, LV_OBJ_FLAG_HIDDEN);
         ui_anim_user_data_t * PropertyAnimation_0_user_data = (ui_anim_user_data_t *)lv_mem_alloc(sizeof(ui_anim_user_data_t));
+        if (!PropertyAnimation_0_user_data) {
+            LV_LOG_WARN("Failed to allocate memory for PropertyAnimation_0_user_data");
+            return;
+        }
         PropertyAnimation_0_user_data->target = TargetObject;
         PropertyAnimation_0_user_data->val = -1;
         lv_anim_t PropertyAnimation_0;
@@ -296,6 +351,11 @@ private:
 
         /* ROTARY OPACITY */
         ui_anim_user_data_t * PropertyAnimation_1_user_data = (ui_anim_user_data_t *)lv_mem_alloc(sizeof(ui_anim_user_data_t));
+        if (!PropertyAnimation_1_user_data) {
+            LV_LOG_WARN("Failed to allocate memory for PropertyAnimation_1_user_data");
+            return;
+        }
+
         PropertyAnimation_1_user_data->target = TargetObject;
         PropertyAnimation_1_user_data->val = -1;
         lv_anim_t PropertyAnimation_1;

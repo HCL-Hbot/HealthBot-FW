@@ -33,7 +33,7 @@
  *********************/
 #define LV_DRV_DELAY_INCLUDE  <time.h>            /*Dummy include by default*/
 #define LV_DRV_DELAY_US(us)  (void)0      /*Delay the given number of microseconds*/
-#define LV_DRV_DELAY_MS(ms)  sleep_ms(1) //vTaskDelay(ms/portTICK_PERIOD_MS)       /*Delay the given number of milliseconds*/
+#define LV_DRV_DELAY_MS(ms)  sleep_ms(ms) //vTaskDelay(ms/portTICK_PERIOD_MS)       /*Delay the given number of milliseconds*/
 
 /*********************
  * DISPLAY INTERFACE

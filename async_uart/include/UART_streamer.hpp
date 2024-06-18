@@ -21,9 +21,11 @@
 
 #include "FreeRTOS.h"
 #include "semphr.h"
+#include <cstring>
 #include "pico/stdlib.h"
 #include "hardware/uart.h"
 #include "hardware/irq.h"
+#include "board_defines.h"
 
 #define RX_MAX_BUFFER_PER_FRAME     64
 #define QUEUE_SIZE                  3 // IMPORTANT Variable! 
@@ -129,7 +131,7 @@ public:
 private:
     bool isConnected = false;
     uint32_t baud_rate; 
-    static inline uart_inst_t* uart_port = uart0;
+    static inline uart_inst_t* uart_port = UART_INST;
     const uint8_t tx_pin;
     const uint8_t rx_pin;
 

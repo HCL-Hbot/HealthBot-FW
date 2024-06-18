@@ -49,13 +49,11 @@ public:
     ~EyeDisplayDriver() {}
 
     void startTasks() {
-        xTaskCreate(EyeDisplayDriver::displayHandler, "EyeDisplayHandler", 1200, this, 1, nullptr);
+        xTaskCreate(EyeDisplayDriver::displayHandler, "EyeDisplayHandler", 1500, this, 2, nullptr);
         xTaskCreate(EyeDisplayDriver::runCommandHandle, "EyeControlHandle", 1200, this, 1, nullptr);
     }
 
     static void displayHandler(void *pvParameters) {
-        lv_init();
-        lv_port_disp_init();
 
         while (true) {
             lv_tick_inc(1);
