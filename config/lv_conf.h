@@ -1,18 +1,27 @@
+/*
+ * Copyright 2024 JUNE - HAN University of Applied Sciences, Health Concept Lab
+ * Project HealthBot
+ * Authors: Victor Hogeweij, Marelle Vink and Richard Kroesen
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+*/
+
 /**
  * @file lv_conf.h
  * Configuration file for v8.4.0
  */
 
-/*
- * Copy this file as `lv_conf.h`
- * 1. simply next to the `lvgl` folder
- * 2. or any other places and
- *    - define `LV_CONF_INCLUDE_SIMPLE`
- *    - add the path as include path
- */
-
-/* clang-format off */
-#if 1 /*Set it to "1" to enable content*/
+#if 1
 
 #ifndef LV_CONF_H
 #define LV_CONF_H
