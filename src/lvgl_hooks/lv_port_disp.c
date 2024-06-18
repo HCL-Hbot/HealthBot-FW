@@ -37,10 +37,10 @@
 /*********************
  *      DEFINES
  *********************/
-#define MY_DISP_HOR_RES 240
-#define MY_DISP_VER_RES 240
-#define DISPLAY1_ID 0
-#define DISPLAY2_ID 1
+#define MY_DISP_HOR_RES     240
+#define MY_DISP_VER_RES     240
+#define DISPLAY1_ID         0
+#define DISPLAY2_ID         1
 
 /**********************
  *      TYPEDEFS
